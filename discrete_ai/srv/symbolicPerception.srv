@@ -1,0 +1,6 @@
+int32 state_index
+std_msgs/Float64MultiArray parameters
+int32 isNew
+---
+std_msgs/Float64MultiArray belief_d
+int32 estimated_state

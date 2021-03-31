@@ -1,0 +1,10 @@
+<root main_tree_to_execute = "MainTree" >
+    <BehaviorTree ID="MainTree">
+            <ReactiveSequence name="root">
+                    <!--AIP_isHolding    goal="0; 0; 1; 0"/--> <!-- State value; state index; object index -->
+                    <!--AIP_isAt    goal="0; 2; 3.7; 0"/-->
+<!--    &lt;!&ndash;              <AIP_isSpotEmpty    goal="0; 3; 2.8; 0; 0.8; 0"/>&ndash;&gt;-->
+                    <AIP_isPlacedAt    goal="0; 4; 1; 1; 0"/> <!-- State value; state index; object index; location index -->
+            </ReactiveSequence>
+    </BehaviorTree>
+</root>

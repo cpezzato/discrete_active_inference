@@ -1,0 +1,10 @@
+#goal definition
+int32 prior
+int32 state_index
+std_msgs/Float64MultiArray parameters
+---
+#result definition
+bool success
+---
+#feedback
+int32 errorFlag
