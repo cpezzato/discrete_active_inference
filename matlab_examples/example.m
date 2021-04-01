@@ -1,11 +1,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  Active inference for task planning AIRLab Demo
+%  Active inference for task planning and execution in robotics
 %
-%  Author:  Corrado Pezzato
-%  Date:    17.07.2020
+%  Author:  Corrado Pezzato, TU Delft
+%  Date:    31.03.2021
 %
-%  Optimized ersion to be ported in Python
+%  Example of discrete decision making using active inference for a robotic
+%  case with conflict resolution. 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,13 +16,9 @@ close all
 
 %% Initialization of the model structure for state estimation only ========
 
-% Initialization can be done at the beginning when defining the objects
-
 % Initial Observations: o
 %--------------------------------------------------------------------------
-%% THIS SHOULD BE PART OF ANOTHER NODE WHICH BROEADC
-% Observations (these can be initialised with getObservations in ROS). The
-% current situation means the robot is not nearby the object, is not
+% The current situation means the robot is not nearby the object, is not
 % holding anything, and is not at the home location
 o_h1 = 2; % isHolding is False
 o_r1 = 2; % isReachable is False
@@ -37,16 +34,9 @@ mdp_l1 = init_isAt(o_l1);
 
 %% Initialization of the model structure for action selection =============
 
-spm_norm([1.5, 0.5]')
-
 MDP_h1 = mdp_h1;
 MDP_r1 = mdp_r1;
 MDP_l1 = mdp_l1;
-
-% Remove actions but for idle for state estimation
-% mdp_h1.V = 1;
-% mdp_r1.V = 1;
-% mdp_l1.V = 1;
 
 % Remove observations from MDP structures 
 MDP_h1 = rmfield(MDP_h1,'o');
@@ -56,7 +46,7 @@ MDP_h1 = rmfield(MDP_h1,'d');
 MDP_r1 = rmfield(MDP_r1,'d');
 MDP_l1 = rmfield(MDP_l1,'d');
     
-% Other initializations for simulation purposes only. To be remove in ROS
+% Other initializations for simulation purposes only
 %--------------------------------------------------------------------------
 epochs = 45; % How many times the simulation goes on
 N = 3; % Steps to get an action's effect 
@@ -66,7 +56,6 @@ prevAction = 3; % 3 means null
 counter = 0;
 
 %% Behavior execution
-
 % Add here the prior to achieve a goal
 %--------------------------------------------------------------------------
 MDP_h1.C{1} = [1 0]';
@@ -87,13 +76,13 @@ action_index = [1 2 3; 1 4 1; 1 5 1];
 
 %% Loop for active inference using MDPs ===================================
 % All mdps and MDPs. This lower case is for perception only
-    allmdps{1} = mdp_h1;
-    allmdps{2} = mdp_r1;
-    allmdps{3} = mdp_l1;
+allmdps{1} = mdp_h1;
+allmdps{2} = mdp_r1;
+allmdps{3} = mdp_l1;
     
-    allMDPs{1} = MDP_h1;
-    allMDPs{2} = MDP_r1;
-    allMDPs{3} = MDP_l1; 
+allMDPs{1} = MDP_h1;
+allMDPs{2} = MDP_r1;
+allMDPs{3} = MDP_l1; 
     
 % Loop for several iterations
 for i=1:epochs
@@ -114,9 +103,9 @@ for i=1:epochs
     end
     
     % At each new iteration you restore all available actions.
-    allMDPs{1}.E = spm_norm([1.01 1 1]'); % Idle, pick, place
-    allMDPs{2}.E = spm_norm([1.01 1]');   % Idle, move MPC
-    allMDPs{3}.E = spm_norm([1.01 1]');   % Idle, move Base
+    allMDPs{1}.E = NORM([1.01 1 1]'); % Idle, pick, place
+    allMDPs{2}.E = NORM([1.01 1]');   % Idle, move MPC
+    allMDPs{3}.E = NORM([1.01 1]');   % Idle, move Base
     
     % Check if previously pushed priors have been satisfied 
     % If so, remove their preconditions from global prior.
@@ -132,19 +121,12 @@ for i=1:epochs
         end
     end
     
-    %% HERE I HAVE TO LOOP OVER THE MDPs which has active priors
-    % Also, I should define preconditions in the form of priors such that I
-    % can just sum them
-    
-    % In Python for all MDPs select only the ones with active priors
-    % Thereshould be one at the beginning of the loop, the next should
-    % appear only if priors are pushed automatically. 
+    %% Loop over the MDPs which has active priors
     
     % Initialize variable to contain the selectd actions from the active mdps
     temp_u = []; 
     
-    % Find active MDPs: for _mdp in allMDP: if min(_mdp.C)>0 then
-    % activeMDP = activeMDP + MDP;
+    % Find active MDPs
     for p = 1:numel(allMDPs)
         if max(max(allMDPs{p}.C{1})) > 0
             allMDPs{p} = aip(allMDPs{p});   
@@ -156,9 +138,8 @@ for i=1:epochs
     if isempty(temp_u)
         temp_u = 1;
     end 
-    % } 
     
-    % Check if both actions are null, if so it means we achieved the
+    % Check if all actions are null, if so it means we achieved the
     % objective and no further actions are needed
     % This check if there is any action which is not idle
     % If both actions are null it means we achieved the goal
@@ -172,13 +153,12 @@ for i=1:epochs
         break % This break can be removed in production code
     else 
         
-    %% Reactivity to unforeseen events ====================================
+    %% Reactivity to unforeseen events
     %----------------------------------------------------------------------
     % Flag to check if an action has been found    
       actionFound = 0;
-    % For every of the possible selected actions which are not idle, I need to check which one
-    % I can execute, if not I need to push its preconditions to the
-    % priors
+    % For every of the possible selected actions which are not idle, check 
+    % which one we can execute, or push its preconditions to the priors
       while ~actionFound  
         % for _mdp in nonIdleMDP: 
         % check preconditions action(u)
@@ -193,8 +173,6 @@ for i=1:epochs
                     unmet_prec = 0;
                     % Check precondtions, for each row of .Prec
                     for j = 1:size(prec,1) % If there are no preconditions this is skipped 
-                        % To add also a check if the precondition is not 0,
-                        % python doesn not allow empty stuff
                         if allmdps{prec(j,1)}.s ~= prec(j,2) % Select type of MDP of interest and check the state
                           unmet_prec = 1; % If not the same, we have an unmet precondition
                           allMDPs{prec(j,1)}.C{1}(prec(j,2)) = 2; % Set the prior for that precondition
@@ -229,7 +207,7 @@ for i=1:epochs
         temp_u = 1;
     end 
     % }
-        % If both actions are still null action, return failure. This means
+        % If all actions are still null action, return failure. This means
         % that there are no suitable actions to meet the necessary
         % preconditions
         if max(temp_u) == 1 && min(temp_u) == 1
@@ -290,7 +268,7 @@ for i=1:epochs
 end
 
 %% Auxiliary Functions ====================================================
-function A = spm_norm(A)
+function A = NORM(A)
     % Normalisation of probability matrix (column elements sum to 1)
     %----------------------------------------------------------------------
     % The function goes column by column and it normalise such that 
@@ -324,7 +302,7 @@ function mdp = init_isHolding(o)
 
     % Initial prior: (negative cost) C, initialised to zero
     %----------------------------------------------------------------------
-    C = spm_norm([0 0]'); % True, False
+    C = NORM([0 0]'); % True, False
 
     % Initial guess about the states: d, all equally possible
     %----------------------------------------------------------------------
@@ -354,7 +332,7 @@ function mdp = init_isHolding(o)
     % Prior over policy is used to give more probability (chance of 
     % success) to some of the control actions. Null action is somehow
     % preferred slightly
-    e = spm_norm([1.01 1 1])';
+    e = NORM([1.01 1 1])';
     
     % Define MDP structure
     %----------------------------------------------------------------------
@@ -376,7 +354,7 @@ function mdp = init_isHolding(o)
     % Note: kappa_d is an additional learning rate for
     % we are basically continuously updating the belief about d with stream
     % of data as input. An important thing is that we need to normalise the
-    % value at every iteration otherwise we are incrementing the eveidence 
+    % value at every iteration otherwise we are incrementing the evidence 
     % unboundtly and whenever the observation changes it takes quite a lot 
     % of time to converge to the correct value. To reach 50% it would 
     % require the same amount of opposite observations. We use then 
@@ -399,7 +377,7 @@ function mdp = init_isAt(o)
 
     % Initial prior: (negative cost) C, initialised to zero
     %----------------------------------------------------------------------
-    C = spm_norm([0 0]'); % True, False
+    C = NORM([0 0]'); % True, False
 
     % Initial guess about the states: d, all equally possible
     %----------------------------------------------------------------------
@@ -424,7 +402,7 @@ function mdp = init_isAt(o)
     % Prior over policy is used to give more probability (chance of 
     % success) to some of the control actions. Null action is somehow
     % preferred slightly
-    e = spm_norm([1.01 1]');
+    e = NORM([1.01 1]');
     
     % Define MDP structure
     %----------------------------------------------------------------------
@@ -457,7 +435,7 @@ function mdp = init_isReachable(o)
     
     % Initial prior: (negative cost) C, initialised to zero
     %----------------------------------------------------------------------
-    C = spm_norm([0 0]'); % True, False
+    C = NORM([0 0]'); % True, False
 
     % Initial guess about the states: d, all equally possible
     %----------------------------------------------------------------------
@@ -482,7 +460,7 @@ function mdp = init_isReachable(o)
     % Prior over policy is used to give more probability (chance of 
     % success) to some of the control actions. Idle action is somehow
     % preferred slightly
-    e = spm_norm([1.01 1]');
+    e = NORM([1.01 1]');
     
     % Define MDP structure
     %----------------------------------------------------------------------
@@ -527,7 +505,7 @@ function mdpPlot(mdp_h,mdp_r,mdp_l,currAction)
                               'isReachable','!isReachable'...
                               'isAt','!isAt'});
                           
-    bar(xbar_label,[spm_norm(mdp_h.D{1});spm_norm(mdp_r.D{1});spm_norm(mdp_l.D{1})])
+    bar(xbar_label,[NORM(mdp_h.D{1});NORM(mdp_r.D{1});NORM(mdp_l.D{1})])
     ylim([0 1])
     ylabel('Probability of a state')
     xlabel('States')

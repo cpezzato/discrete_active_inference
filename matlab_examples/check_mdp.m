@@ -1,6 +1,11 @@
 function [MDP] = check_mdp(MDP)
+%Adapted from https://www.fil.ion.ucl.ac.uk/spm/ by Corrado Pezzato
+% Copyright (C) 2005 Wellcome Trust Centre for Neuroimaging
+
+% Karl Friston
+% $Id: spm_MDP_check.m 7766 2020-01-05 21:37:39Z karl $
+
 % MDP structure checking
-% FORMAT [MDP] = spm_MDP_check(MDP)
 %
 % MDP.V(T - 1,P,F)      - P allowable policies of T moves over F factors
 % or
@@ -27,11 +32,6 @@ function [MDP] = check_mdp(MDP)
 % policies, it will be assumed that I = 1 and all policies (for each
 % marginal hidden state) are allowed.
 %__________________________________________________________________________
-% Copyright (C) 2005 Wellcome Trust Centre for Neuroimaging
-
-% Karl Friston
-% $Id: spm_MDP_check.m 7766 2020-01-05 21:37:39Z karl $
-
 
 % deal with a sequence of trials
 %==========================================================================
@@ -80,8 +80,6 @@ for g = 1:Ng
 end
 
 % check policy specification (create default moving policy U, if necessary)
-% V = V(Nt,Np,Nf)
-% U = U(Np,Nf)
 %--------------------------------------------------------------------------
 if isfield(MDP,'U')
     if size(MDP.U,1) == 1 && size(MDP.U,3) == Nf

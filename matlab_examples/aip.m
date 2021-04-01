@@ -1,7 +1,6 @@
 function [MDP] = aip(MDP)
-%MY_AI computes the best action according to the received MDP model, using
-%active inference as a gradient descent on the free-energy
-%   Attempt to remove dependancy from SPM toolbox
+%Function to compute the best action according to the received MDP model, 
+% using active inference and gradient descent on the free-energy
 
     %% Initialization
 
@@ -11,7 +10,7 @@ function [MDP] = aip(MDP)
     Ns = size(MDP.B{1},1);  % number of hidden states
     Nu = size(MDP.B{1},3);  % number of hidden controls
     No = Ns;                % number of outcomes, we assume we can sense s
-    Ni    = 4;             % number of VB iterations
+    Ni    = 4;              % number of VB iterations
 
     T = size(MDP.V,1)+1;    % Time horizon of 1 
     
@@ -64,11 +63,6 @@ function [MDP] = aip(MDP)
     end
     
     O = zeros(1,Ns,No);
-    
-    % Observations in sparse form
-%     for i=1:No
-%         O{i} = zeros(1,Ns);
-%     end 
 
     % Initial guess over current posterior state
     % Initialize variable to contain the states over T
@@ -101,8 +95,6 @@ function [MDP] = aip(MDP)
           
         % Bayesian model average (xq)
         %----------------------------------------------------------
-        % This is the posterior over the outcome factor
-        %xq = X(:,t);
                         
         % if outcome is not specified
         %----------------------------------------------------------
@@ -117,18 +109,6 @@ function [MDP] = aip(MDP)
         % corresponding place
         O(1,o(t),t) = 1;       
         
-        % Likelihood of hidden states
-        %==================================================================
-        %L{t} = (A*O(:,:,t)')';
-            
-        % reset? What does this do actually?
-        %--------------------------------------------------------------
-%         for i = 1:T
-%           for k = 1:Np
-%             x(:,i,k) = SOFTMAX(LOG(x(:,i,k))/erp);
-%           end
-%         end      
-        
         % Variational updates (hidden states) under sequential policies (equations from mathematical derivation)
         %==============================================================
         F = zeros(Np,1); % Free energy for each of the policies
@@ -137,13 +117,10 @@ function [MDP] = aip(MDP)
             for i = 1:Ni % iterate belief updates
                 % Main loop for free-energy computation, state estimation
                 F(k)  = 0;          % reset free energy for this policy
-                for j = 1:T         % loop over future time points, why do we need this if we are already in the loop with T?
+                for j = 1:T         % loop over future time points
                 
                     % current posterior for a given policy
                     %--------------------------------------------------
-                    if j == 1
-                        %xq = x(:,j,k);
-                    end
                         
                     % hidden states for this time and policy
                     %----------------------------------------------
@@ -155,14 +132,8 @@ function [MDP] = aip(MDP)
                    
                     % marginal likelihood over outcome factors??
                     %------------------------------------------
-%                     
-%                         qL = spm_dot(L{m,j},xq(m,:),f);
-%                         qL = spm_log(qL(:));
-%                     end
-%                     
-%                     qL = LOG(L); % Remember L = (A*O{t}')';
                     if j <= t
-                        qL = LOG(A)*O(:,:,j)'; % Is there a log here or not?
+                        qL = LOG(A)*O(:,:,j)'; 
                     end
                     
                     % entropy
@@ -172,15 +143,15 @@ function [MDP] = aip(MDP)
                     % emprical priors 
                     %------------------------------------------
                     if j == 1 % FIRST ITERATION (Backward messages)
-                        px = LOG(D)+LOG(bB(:,:,V(k)))*x(:,j+1,k); % I can simplify here the indexes for x since my T = 2
-                        vF  = px + qL - qx; % this might be due to the mean-field that can be overconfident. See process-theory
+                        px = LOG(D)+LOG(bB(:,:,V(k)))*x(:,j+1,k); % Simplify here the indexes for x since T = 2 in this case
+                        vF  = px + qL - qx; 
                     else % (Forward messages)
                         px = LOG(B(:,:,V(k)))*x(:,j-1,k);
                         vF  = px + qL - qx;
                     end
                     
                     if j == 1 % FIRST ITERATION (Backward messages)
-                        FF = -qx + LOG(D) - qL; % I can simplify here the indexes for x since my T = 2
+                        FF = -qx + LOG(D) - qL;
                     else % (Forward messages)
                         FF = -qx + LOG(B(:,:,V(k)))*x(:,j-1,k) - qL;
                     end
@@ -188,10 +159,9 @@ function [MDP] = aip(MDP)
                     % (negative) free energy
                     %------------------------------------------
                     %F(k) = F(k) + sx'*vF;
-                    F(k) = F(k) + sx'*FF;   % Removing the backward messages, we need to specify more preferences for the action null so lnE. but then the equations are like in the paper
+                    F(k) = F(k) + sx'*FF;   % Removing the backward messages, we need to specify more preferences for the action null so lnE.
                     % update
                     %------------------------------------------
-                    %vF = vF - mean(vF);
                     sx = SOFTMAX(qx+vF); % Set gradient of F to zero and take softmax, remove log(sx)
                     
                     % store update neuronal activity
@@ -205,7 +175,7 @@ function [MDP] = aip(MDP)
         %==============================================================
         Q   = zeros(Np,1); % expected free energy
     
-        % Check why you need to iterate over Ni. Ni influences also x since
+        % Ni influences also x since
         % that you compute Ni times the posterior but every time you start
         % from the previous trial since the info is stored in x
         
@@ -213,19 +183,7 @@ function [MDP] = aip(MDP)
                     
             % Bayesian surprise about inital conditions
             %------------------------------------------------------
-%             if isfield(MDP,'d')
-%                 Q(k) = Q(k) - spm_dot(wD{m,f},x{m,f}(:,1,k));
-%             end
             for j = t:T % Only from current time untile the end T  
-                % get expected states for this policy and time
-                %--------------------------------------------------
-                %xq = x(:,j,k);
-                % (negative) expected free energy
-                %==================================================
-                % Bayesian surprise about states
-                %--------------------------------------------------
-                %Q(k) = Q(k) + spm_MDP_G(A(m,:),xq(m,:)); % If A is the
-                %identity this term simplifies to 0!
                 % prior preferences about outcomes
                 %----------------------------------------------
                 qo   = A*x(:,j,k);
@@ -248,16 +206,10 @@ function [MDP] = aip(MDP)
             % estimation
             X(:,i) = reshape(x(:,i,:),Ns,Np)*u(:,t);
         end
-            
-        % My version, this should be equivalent to the loop above. Stau =
-        % Sumstau_pi*Q(pi)
-%         for i = 1:T % Iterates over time step
-%             X(:,i) = [x(:,i,1), x(:,i,2), x(:,i,3)]*u(:,t);
-%         end
         
         % record (negative) free energies
         %--------------------------------------------------------------
-        MDP.F(:,t) = F; % Note that F(k) is the total (accumulateda) F after T time steps according to policy K
+        MDP.F(:,t) = F; % Note that F(k) is the total (accumulated) F after T time steps according to policy K
         MDP.G(:,t) = Q;            
         
         % action selection u_t = max Sum kronDrlta u,pi qu(pi)
