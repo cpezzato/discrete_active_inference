@@ -11,6 +11,28 @@ http://wiki.ros.org/Robots/TIAGo%2B%2B/Tutorials/Installation/Tiago%2B%2BSimulat
 Install packages for retail store simulation (at the current stage remove the rosplan package since we do not need it)
 https://gitlab.tudelft.nl/cor/ro47014/retail_store_lightweight_sim
 
+***Behavior trees library***
+These are the steps you need to follow to be able to run these tutorials in Ubuntu. They have been tested in Ubuntu 18.04 with ROS Mlodic. 
+
+Before proceeding, it is recommended to to install the following dependencies:
+
+     sudo apt-get install libzmq3-dev libboost-dev
+
+You can also easily install the [Behavior Tree library](https://github.com/BehaviorTree/BehaviorTree.CPP) with the command
+
+    sudo apt-get install ros-$ROS_DISTRO-behaviortree-cpp-v3
+    sudo apt-get update   
+
+## How to run
+- Run the simulation: 
+    roslaunch retail_store_simulation tiago_simulation.launch world:=multiple_cubes
+- Run the active inference perception: 
+    rosrun discrete_ai tiago_perception.py
+- Run the active inference server for deciison making:
+    rosrun discrete_ai active_inference_server.py
+- Run the demo:
+    rosrun discrete_ai demo_executeBT
+
 ## Content
 (Last update 01.04.2021)
 This repositiry contains a Matlab example and a ros package for active inference for task planning and execution. 
@@ -22,10 +44,3 @@ This repositiry contains a Matlab example and a ros package for active inference
 
 **ROS:**
 The ROS package contains the python implementation and an example use with TIAGo (TO BE ADDED)
-
-## How to run
-- Run the simulation: $ roslaunch retail_store_simulation tiago_simulation.launch world:=multiple_cubes
-- Run the active inference perception: $ rosrun discrete_ai tiago_perception.py
-- Run the active inference server for deciison making: $ rosrun discrete_ai active_inference_server.py
-- Run the demo: rosrun discrete_ai demo_executeBT
-
