@@ -16,7 +16,7 @@ These are the steps you need to follow to be able to run these tutorials in Ubun
 
 Before proceeding, it is recommended to to install the following dependencies:
 
-     sudo apt-get install libzmq3-dev libboost-dev
+    sudo apt-get install libzmq3-dev libboost-dev
 
 You can also easily install the [Behavior Tree library](https://github.com/BehaviorTree/BehaviorTree.CPP) with the command
 
@@ -36,7 +36,8 @@ This repositiry contains a Matlab example and a ros package for active inference
 The ROS package contains the python implementation and an example use with TIAGo (TO BE ADDED)
 
 ## How to run
-- Run the simulation, the perception, the decision making, and the demo: 
+
+Run the simulation, the perception, the decision making, and the demo:
 
     roslaunch retail_store_simulation tiago_simulation.launch world:=multiple_cubes
     rosrun discrete_ai tiago_perception.py
