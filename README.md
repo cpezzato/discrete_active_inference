@@ -2,9 +2,17 @@
 
 Repository for active inference and behavior trees for discrete decision making. Please read the associated paper for more theorethical considerations about the algorithms.
 
-## Current development
-(Last update 01.04.2021)
+## Dependacies
+***TIAGo++***
+Install the necessary packages for TIAGo++ following the instructions at:
+http://wiki.ros.org/Robots/TIAGo%2B%2B/Tutorials/Installation/Tiago%2B%2BSimulation
 
+***Retail store simulation*** (we should release it somewhere public on github as wel)
+Install packages for retail store simulation (at the current stage remove the rosplan package since we do not need it)
+https://gitlab.tudelft.nl/cor/ro47014/retail_store_lightweight_sim
+
+## Content
+(Last update 01.04.2021)
 This repositiry contains a Matlab example and a ros package for active inference for task planning and execution. 
 
 ### Main files 
@@ -15,4 +23,9 @@ This repositiry contains a Matlab example and a ros package for active inference
 **ROS:**
 The ROS package contains the python implementation and an example use with TIAGo (TO BE ADDED)
 
-[1] Colledanchise, Michele, and Petter Ögren. "How behavior trees modularize hybrid control systems and generalize sequential behavior compositions, the subsumption architecture, and decision trees." IEEE Transactions on robotics 33.2 (2016): 372-389.
+## How to run
+- Run the simulation: $ roslaunch retail_store_simulation tiago_simulation.launch world:=multiple_cubes
+- Run the active inference perception: $ rosrun discrete_ai tiago_perception.py
+- Run the active inference server for deciison making: $ rosrun discrete_ai active_inference_server.py
+- Run the demo: rosrun discrete_ai demo_executeBT
+

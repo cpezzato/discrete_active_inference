@@ -150,7 +150,7 @@ BT::NodeStatus btAIPClient::tick()
       ROS_INFO("Sending Goal prior=%i state_index=%i parameters[0] %f", goal.prior, goal.state_index, goal.parameters.data[0]);      // This is from te definition of Pose2D
 
       // Building goal message for the move_base
-      behavior_control::AIPBTGoal msg;
+      discrete_ai::AIPBTGoal msg;
       msg.prior = goal.prior;
       msg.state_index = goal.state_index;
       for (int i = 0; i < goal.parameters.data.size(); i++) {

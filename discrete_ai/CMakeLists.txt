@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(behavior_control)
+project(discrete_ai)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

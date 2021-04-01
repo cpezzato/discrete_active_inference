@@ -8,8 +8,8 @@
 
 #include <ros/ros.h>
 #include <move_base_msgs/MoveBaseAction.h>
-#include <behavior_control/AIPBTAction.h>
-#include <behavior_control/symbolicPerception.h>
+#include <discrete_ai/AIPBTAction.h>
+#include <discrete_ai/symbolicPerception.h>
 
 #include <actionlib/client/simple_action_client.h>
 
@@ -97,7 +97,7 @@ class ConditionisHolding : public BT::SyncActionNode
     ConditionisHolding(const std::string& name, const BT::NodeConfiguration& config)
       : BT::SyncActionNode(name, config)
     {
-        _srv_client = n.serviceClient<behavior_control::symbolicPerception>("symbolic_perception");
+        _srv_client = n.serviceClient<discrete_ai::symbolicPerception>("symbolic_perception");
     }
 
     // You must override the virtual function tick()
@@ -112,7 +112,7 @@ class ConditionisHolding : public BT::SyncActionNode
     private:
     ros::NodeHandle n;
     ros::ServiceClient _srv_client;
-    behavior_control::symbolicPerception srv;
+    discrete_ai::symbolicPerception srv;
 };
 
 class ConditionisPlacedAt : public BT::SyncActionNode
@@ -121,7 +121,7 @@ class ConditionisPlacedAt : public BT::SyncActionNode
     ConditionisPlacedAt(const std::string& name, const BT::NodeConfiguration& config)
       : BT::SyncActionNode(name, config)
     {
-        _srv_client = n.serviceClient<behavior_control::symbolicPerception>("symbolic_perception");
+        _srv_client = n.serviceClient<discrete_ai::symbolicPerception>("symbolic_perception");
     }
 
     // You must override the virtual function tick()
@@ -136,7 +136,7 @@ class ConditionisPlacedAt : public BT::SyncActionNode
     private:
     ros::NodeHandle n;
     ros::ServiceClient _srv_client;
-    behavior_control::symbolicPerception srv;
+    discrete_ai::symbolicPerception srv;
 };
 
 // This is an asynchronous operation that will run in a separate thread.
@@ -202,7 +202,7 @@ class btAIPClient : public BT::AsyncActionNode
 
   private:
     std::atomic_bool _halt_requested;
-    typedef actionlib::SimpleActionClient<::behavior_control::AIPBTAction> myClient;      // <nameOfAction> This is the name of the action as in the automatically generated messages
+    typedef actionlib::SimpleActionClient<::discrete_ai::AIPBTAction> myClient;      // <nameOfAction> This is the name of the action as in the automatically generated messages
     myClient _client;
 };
 
