@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<launch>
+  <node name="nonBlockingPickAction" pkg="behavior_control" type="nonBlockingPick.py" />
+  <node name="nonBlockingPlaceOnPlateAction" pkg="behavior_control" type="nonBlockingPlace.py" />
+  <node name="nonBlockingPlacePlateAction" pkg="behavior_control" type="nonBlockingPlacePlate.py" />
+  <node name="nonBlockingPushAction" pkg="behavior_control" type="nonBlockingPush.py" />
+</launch>
+
+

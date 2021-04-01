@@ -5,9 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(catkin REQUIRED COMPONENTS
-  mobile_control
-  mobile_manipulator
-  mobile_moveit
   actionlib
   actionlib_msgs
   move_base_msgs
@@ -34,38 +31,25 @@ generate_messages(
 )
 
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+#  INCLUDE_DIRS include
+#  LIBRARIES bt_tutorial
   CATKIN_DEPENDS roscpp rospy std_msgs actionlib_msgs
 #  DEPENDS system_lib
 )
 
-catkin_install_python(PROGRAMS scripts/AIPBT_server.py scripts/symbolic_perception_server.py scripts/testing/symbolic_perception_client.py
+catkin_install_python(PROGRAMS scripts/active_inference_server.py scripts/tiago_perception.py
                       DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 include_directories(
-  include
+ include
   ${catkin_INCLUDE_DIRS}
 )
 
-# Declare a C++ library
+## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/nodes/AIRLabAction_nodes.cpp
 )
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
-
-install(
-  TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-)
-
-install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
 
 add_executable(demo_executeBT src/demoBT.cpp)
-# add_dependencies(demo_executeBT ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(demo_executeBT ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(demo_executeBT ${catkin_LIBRARIES} ${PROJECT_NAME})

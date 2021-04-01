@@ -1,3 +1,4 @@
+
 # This is a module which contains the templates for the classes to define MDP problems to feed to active inference
 # This is the pool of actions and states that we can manipulate
 import numpy as np
@@ -28,6 +29,7 @@ class MDPIsHolding:
         self.preconditions = np.zeros((2, 2, 3)) - 1	    # Action pick
         # self.preconditions[:, :, 1] = np.array([[1, 0],     # isReachable; state 1 value 0 (so it is reachable)
         #                                         [3, 0]])    # isHandFree: state 3 value 0 (so it is not holding anything) Remember indexes starts from 0
+
         # Only is Reachable
         self.preconditions[:, :, 1] = np.array([[1, 0],     # isReachable; state 1 value 0 (so it is reachable)
                                                 [-1, -1]])
@@ -184,11 +186,14 @@ class MDPIsSpotEmpty:
                                     [0, 0]])
         # Preconditions of the actions above
         # ----------------------------------------------------------
-        self.preconditions = np.zeros((2, 2, 2)) - 1	    # No preconditions foi idle
+        self.preconditions = np.zeros((2, 2, 2)) - 1	    # No preconditions for idle and push when using TIAGo
+        
+        # UNCOMMENT THIS WHEN USING SINGLE ARM SYSTEMS
         # precondition for Push is that the hand is empty
-        self.preconditions[:, :, 1] = np.array([[0, 1],  # !isHolding; state 0 value 1 (so it is not holding anything)
+        '''self.preconditions[:, :, 1] = np.array([[0, 1],  # !isHolding; state 0 value 1 (so it is not holding anything)
                                                 [-1, -1]])
-
+        '''
+        
         # Likelihood matrix matrices
         # ----------------------------------------------------------
         self.A = np.eye(2)  # Identity mapping
@@ -231,7 +236,7 @@ class MDPIsPlacedAt:
         self.name = name  # Name of this specific state
 
         self.V = np.array([0, 1])  # Allowable policies, it indicates policies of depth 1
-        self.B = np.zeros((2, 2, 2))  # Allowable actions initiation (idle and push)
+        self.B = np.zeros((2, 2, 2))  # Allowable actions initiation (idle and place at)
         # Transition matrices
         # ----------------------------------------------------------
         self.B[:, :, 0] = np.eye(2)  # Idle action
@@ -240,7 +245,7 @@ class MDPIsPlacedAt:
         # Preconditions of the actions above
         # ----------------------------------------------------------
         self.preconditions = np.zeros((2, 2, 2)) - 1	    # No preconditions foi idle
-        # precondition for Push is that the hand is empty
+        # precondition for place at is that the hand is empty
         self.preconditions[:, :, 1] = np.array([[3, 0],  # isSpotEmpty: state 3 value 0
                                                 [0, 0]])  # isHolding
 

@@ -1,22 +1,7 @@
 # This is a module to perform active inference. Translating the file my_AIP from Matlab
-
-"""
-    File: AIP.py
-
-    Description: this file contains the code for active inference performing free-energy minimization for state
-    estimation and action selection. This code is ported from simpler Matlab examples, based on the SPM toolbox provided
-    by Karl Friston
-
-    Author: Corrado Pezzato, TU Delft and AIRLab
-    Date last update: 31.08.2020
-"""
-
 import numpy as np
 import copy
 
-
-# Useful functions
-# -----------------------------------------------------------------------------------------------------------------------
 def aip_log(var):
     # Natural logarithm of an element, preventing 0. The element can be a scalar, vector or matrix
     return np.log(var + 1e-16)
@@ -42,13 +27,14 @@ def aip_softmax(var):
     for i in range(np.shape(var)[0]):
         var[i] = ex[i] / np.sum(ex)  # Compute softmax element by element
     return var
-# ----------------------------------------------------------------------------------------------------------------------
 
 
-# Main function to perform action selection with active inference which performs free-energy minimisation
 def aip_select_action(mdp):
-    # Initialization of variables mdp is a structure with several fields
-    # ------------------------------------------------------------------
+    # The core function which performs free-energy minimisation and action selection
+    # mdp is a structure with several fields
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # Initialization of variables
     n_policies = np.shape(mdp.V)[0]  # Number of allowable policies
     n_states = np.shape(mdp.B)[0]  # Number of states
     n_actions = np.shape(mdp.B)[2]  # Number of controls
@@ -57,7 +43,7 @@ def aip_select_action(mdp):
     t_horizon = 2  # Time horizon to look one step ahead
 
     # Assigning local variables to this instance of the function
-    # ----------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------------------
     policy_indexes_v = mdp.V  # Indexes of possible policies
     policy_post_u = np.zeros([n_policies, t_horizon])  # Initialize vector to contain posterior probabilities of actions
 
@@ -88,7 +74,7 @@ def aip_select_action(mdp):
     prior_E = aip_log(aip_norm(mdp.E))
 
     # Current observation
-    # --------------------
+    # ------------------------------------------------------------------------------------------------------------------
     outcome_o = np.zeros([1, t_horizon]) - 1
     # If outcomes have been specified then set it, otherwise leave to 0
     if hasattr(mdp, 'o'):
@@ -97,7 +83,7 @@ def aip_select_action(mdp):
     sparse_O = np.zeros((1, n_states, n_outcomes))  # Outcomes here are indicated as [1 0], [0 1]
 
     # Posterior states
-    # ----------------
+    # ------------------------------------------------------------------------------------------------------------------
     # Initial guess about posterior hidden states, in 'compact notation' with 1 and 2
     hidden_states_s = np.zeros([1, t_horizon]) - 1  # Unassigned states and values are -1
     hidden_states_s[0, 0] = np.argmax(mdp.D)  # Get index of max value and set as initial state
@@ -111,7 +97,7 @@ def aip_select_action(mdp):
         post_x[:, 0, policy] = np.transpose(prior_D)
 
     # Active inference loop
-    # =====================
+    # ------------------------------------------------------------------------------------------------------------------
     for t in range(t_horizon):
 
         # Initialization of this trial, hidden states, outcomes, and free-energy
@@ -167,7 +153,7 @@ def aip_select_action(mdp):
                         vF = px + qL - qx
 
                     # Auxiliary variables for gradient of F
-                    if time_tau == 0:  # (Backward messages)
+                    if time_tau == 0:   # (Backward messages)
                         FF = -qx + aip_log(prior_D) - qL
                     else:  # (Forward messages)
                         dummy_post_x = np.reshape(post_x[:, time_tau - 1, this_policy], (2, 1))
@@ -196,14 +182,13 @@ def aip_select_action(mdp):
         # Variational updates of policies
         # =========================================
         qu = aip_softmax(prior_E + expected_F + free_energy)
-        policy_post_u[:, t] = np.reshape(qu, (n_policies,))  # Every column of u indicates the posterior about a policy
+        policy_post_u[:, t] = np.reshape(qu, (n_policies,))   # Every column of u indicates the posterior about a policy
 
         # Bayesian model averaging of hidden states (over policies)
         for i in range(t_horizon):
             # Reshape puts the cells of x for each of the allowable policies as a column for X. Then,
             # we multiply for u, to obtain the policy independent state estimation
-            sparse_post_X[:, i] = np.transpose(
-                np.reshape(np.dot(np.reshape(post_x[:, i, :], (n_states, n_policies)), policy_post_u[:, t]), (2, 1)))
+            sparse_post_X[:, i] = np.transpose(np.reshape(np.dot(np.reshape(post_x[:, i, :], (n_states, n_policies)), policy_post_u[:, t]), (2, 1)))
 
         # Record (negative) free energies
         if hasattr(mdp, 'F'):
@@ -220,19 +205,18 @@ def aip_select_action(mdp):
             mdp.G[:, t] = np.reshape(expected_F, (n_policies,))
 
         # Action selection
-        if t < t_horizon - 1:
+        if t < t_horizon-1:
             # Marginal posterior over actions
             Pu = aip_softmax(aip_log(policy_post_u[:, t]))
             if hasattr(mdp, 'u'):
-                mdp.u[0, t] = np.argmax(Pu)  # Choose the most probable posterior action
+                mdp.u[0, t] = np.argmax(Pu)        # Choose the most probable posterior action
             else:
-                setattr(mdp, 'u', np.zeros([1, t_horizon - 1]))
+                setattr(mdp, 'u', np.zeros([1, t_horizon-1]))
                 mdp.u[0, t] = np.argmax(Pu)
 
-    # Learning (for now only of the initial distribution d)
-    # =====================================================
+    # Learning
+    # ------------------------------------------------------------------------------------------------------------------
     # Update of initial belief d
-    # --------------------------
     if hasattr(mdp, 'd'):
         mdp.d = mdp.d + np.reshape(mdp.kappa_d * sparse_post_X[:, 0], (2, 1))  # Update initial belief
         # Normalize probability
