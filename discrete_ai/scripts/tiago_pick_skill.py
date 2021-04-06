@@ -60,12 +60,11 @@ class tiagoPick(object):
     def aruco_cb(self, msg):
         # Callback to update pose of detected aruco marker on the object
         for marker in msg.markers:
-            if marker.id == self._aruco_id:
-                pass
-            print('Received aruco pose')
-            self._aruco_pose = marker.pose
-            if not self.grasping:
-                self.counter += 1
+            if marker.id == self._aruco_id or marker.id == 8 :
+                print('Received aruco pose')
+                self._aruco_pose = marker.pose
+                if not self.grasping:
+                    self.counter += 1
 
         if self.counter > 6:
             self._aruco_found = True

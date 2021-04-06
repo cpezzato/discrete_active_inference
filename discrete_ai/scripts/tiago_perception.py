@@ -79,7 +79,7 @@ def handle_symbolic_perception_request(req):
     elif req.state_index < n_mdps:  # If state_index is valid populate observations
         if req.state_index == 0:  # Check if it is holding according to fingers' aperture
             #if np.abs(fingers_state[0] + fingers_state[1]-0.06) < 0.01:  # Less than 6cm
-            if np.abs(fingers_state[0] + fingers_state[1]) < 0.06 and np.abs(fingers_state[0] + fingers_state[1])>0.02:
+            if np.abs(fingers_state[0] + fingers_state[1]) < 0.065 and np.abs(fingers_state[0] + fingers_state[1])>0.02:
                 print('Is holding')
                 o_isHolding = 0
                 # Setting observation
@@ -121,7 +121,7 @@ def handle_symbolic_perception_request(req):
             print('Base Location', base_location)
             #print('Goal Location [3.7, 0]')
             print('Diff dist', diff_dist)
-            if np.linalg.norm(diff_dist) < 0.10:
+            if np.linalg.norm(diff_dist) < 0.15:
                 print('Is at')
                 o_isAt = 0
                 # Setting observation
@@ -131,32 +131,30 @@ def handle_symbolic_perception_request(req):
                 o_isAt = 1
                 # Setting observation
                 setattr(mdp_l, 'o', o_isAt)  # 0 = At, 1 = notAt
-
-        if req.state_index == 3:  # Check if it hand is empty
+            
+        if req.state_index == 3:  # Check if place location is empty
             # if paper_box_location[1] > 0.9:  # To be changed with a better metric, now it is application specific
             #     print('Place location is free')
-            #     o_isSpotEmpty = 0
+            o_isSpotEmpty = 0
             #     # Setting observation
-            #     setattr(mdp_e, 'o', o_isSpotEmpty)  # 0 = Empty
+            setattr(mdp_e, 'o', o_isSpotEmpty)  # 0 = Empty
             # else:
             #     print('Place location is NOT free')
             #     o_isSpotEmpty = 1
             #     # Setting observation
             #     setattr(mdp_e, 'o', o_isSpotEmpty)  # 1 = notEmpty
-            o_isSpotEmpty = 0
             
         if req.state_index == 4:  # Check if obj is placed at the location
-            # if np.linalg.norm(np.array(box_location)-np.array(desired_place_loc)) < 0.15:  # To be changed with a better metric, now it is application specific
-            #     print('Obj is placed at loc')
-            #     o_isPlacedAt = 0
-            #     # Setting observation
-            #     setattr(mdp_p, 'o', o_isPlacedAt)
-            # else:
-            #     print('Obj is NOT placed at loc')
-            #     o_isPlacedAt = 1
-            #     # Setting observation
-            #     setattr(mdp_p, 'o', o_isPlacedAt)
-            o_isPlacedAt = 0
+            if np.linalg.norm(np.array(box_location)-np.array(desired_place_loc)) < 0.15:  # To be changed with a better metric, now it is application specific
+                print('Obj is placed at loc')
+                o_isPlacedAt = 0
+                # Setting observation
+                setattr(mdp_p, 'o', o_isPlacedAt)
+            else:
+                print('Obj is NOT placed at loc')
+                o_isPlacedAt = 1
+                # Setting observation
+                setattr(mdp_p, 'o', o_isPlacedAt)
 
         # Run active inference to build probabilistic belief for this state_index
         # If a new goal has been reached we need to reset the belief, otherwise we could have spurious decisions since we believe things that are still related to the previous scenarion

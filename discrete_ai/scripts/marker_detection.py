@@ -31,15 +31,13 @@ class detectMarker(object):
     def aruco_cb(self, msg):
         # Callback to update pose of detected aruco marker on the object
         for marker in msg.markers:
-            if marker.id == self._aruco_id:
-                pass
-            self._aruco_found = True
-            self._aruco_pose = marker.pose
-            
-            
-            self._aruco_pose.pose.orientation.x = 0.707
-            self._aruco_pose.pose.orientation.y = 0.0
-            self._aruco_pose.pose.orientation.z = 0.0
-            self._aruco_pose.pose.orientation.w = 0.707        
-            #print('Ready to publish',self._aruco_pose)
-            self._aruco_pub.publish(self._aruco_pose.pose)
+            if marker.id == self._aruco_id or marker.id == 8:
+                self._aruco_found = True
+                self._aruco_pose = marker.pose
+
+                self._aruco_pose.pose.orientation.x = 0.707
+                self._aruco_pose.pose.orientation.y = 0.0
+                self._aruco_pose.pose.orientation.z = 0.0
+                self._aruco_pose.pose.orientation.w = 0.707        
+                #print('Ready to publish',self._aruco_pose)
+                self._aruco_pub.publish(self._aruco_pose.pose)
