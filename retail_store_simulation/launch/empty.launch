@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Configurable launch args -->
+  <arg name="use_sim_time" default="true" />
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false" />
+  <arg name="use_moveit_camera" default="true"/>
+  <arg name="pal_gz_model_path" default="$(find tiago_gazebo)/models"/>
+  <arg name="pal_gz_resource_path" default="$(find tiago_gazebo)"/>
+  <arg name="airlab_model_path" default="$(find retail_store_simulation)/models"/>
+  <arg name="world" default="$(find gazebo_ros)/launch/empty_world.launch"/>
+  <arg name="world_name" default="empty"/>
+
+  <env name="GAZEBO_MODEL_PATH" value="$(arg airlab_model_path):$(arg pal_gz_model_path):$(find pal_gazebo_worlds)/../pal_gazebo_worlds_private/models:$(find pal_gazebo_worlds)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(arg pal_gz_resource_path):$(find pal_gazebo_worlds)/../pal_gazebo_worlds_private:$(find pal_gazebo_worlds):$(optenv GAZEBO_RESOURCE_PATH)"/>
+
+
+  <!-- Launch Gazebo with empty world -->
+  <include file="$(arg world)">
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="use_sim_time" value="$(arg use_sim_time)" />
+    <arg name="paused" value="false"/>
+    <arg name="world_name" value="$(find retail_store_simulation)/worlds/$(arg world_name).world"/>
+  </include>
+
+</launch>
