@@ -39,7 +39,7 @@ The ROS package contains the python implementation and an example use with TIAGo
 
 Run the simulation, the perception, the decision making, and the demo:
 
-    roslaunch retail_store_simulation tiago_simulation.launch world:=multiple_cubes
+    roslaunch retail_store_simulation tiago_simulation.launch
     rosrun discrete_ai tiago_perception.py
     rosrun discrete_ai active_inference_server.py
     rosrun discrete_ai demo_executeBT
