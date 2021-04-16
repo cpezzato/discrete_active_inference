@@ -7,10 +7,10 @@ from math import pi
 import copy
 import AIP                          # Module for active inference routine
 import demo_templates               # Module for action templates and active inference states
-import behavior_control.msg         # Imports the custom generated messages
+import discrete_ai.msg         # Imports the custom generated messages
 from std_msgs.msg import Float64
 
-from behavior_control.srv import *  # Import for symbolic_perception_service
+from discrete_ai.srv import *  # Import for symbolic_perception_service
 # from move_base_skill_moveit import MoveBaseClientClass
 # from pick_skill_moveit import PickClientClass
 # from place_on_plate_skill_moveit import PlaceOnPlateClientClass
@@ -204,15 +204,15 @@ def adaptive_action_selection(goal, _new_prior):
 # Main class for action selection using active inference
 class AIPBTAction(object):
     # Create messages that are used to publish feedback and result
-    _feedback = behavior_control.msg.AIPBTFeedback()
-    _result = behavior_control.msg.AIPBTResult()
+    _feedback = discrete_ai.msg.AIPBTFeedback()
+    _result = discrete_ai.msg.AIPBTResult()
 
     # Class constructor
     def __init__(self, name):
         rospy.loginfo('Server initialized...')
         self._action_name = name
         # Create SimpleActionServer
-        self._as = actionlib.SimpleActionServer(self._action_name, behavior_control.msg.AIPBTAction,
+        self._as = actionlib.SimpleActionServer(self._action_name, discrete_ai.msg.AIPBTAction,
                                                 execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
@@ -221,10 +221,10 @@ class AIPBTAction(object):
         self.old_goal_parameters = []
 
         # Defining the action clients for non blocking execution
-        # nonblocking_place_plate_client = actionlib.SimpleActionClient('nonBlockingPlaceOnPlateAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_place_client = actionlib.SimpleActionClient('nonBlockingPlaceAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_pick_client = actionlib.SimpleActionClient('nonBlockingPickAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_push_client = actionlib.SimpleActionClient('nonBlockingPushAction', behavior_control.msg.AIPBTAction)
+        # nonblocking_place_plate_client = actionlib.SimpleActionClient('nonBlockingPlaceOnPlateAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_place_client = actionlib.SimpleActionClient('nonBlockingPlaceAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_pick_client = actionlib.SimpleActionClient('nonBlockingPickAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_push_client = actionlib.SimpleActionClient('nonBlockingPushAction', discrete_ai.msg.AIPBTAction)
 
         # Create client
         # self.action1 = nonblocking_pick_client

@@ -21,7 +21,7 @@ class tiagoPlace(object):
 
         # Aruco
         self._aruco_pose = geometry_msgs.msg.PoseStamped()
-        self._aruco_id = 0
+        self._aruco_id = 111
         self._aruco_found = False
         
         # Move it and gripper

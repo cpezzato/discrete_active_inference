@@ -87,28 +87,28 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
     <state world_name='default'>
-      <sim_time>53 259000000</sim_time>
-      <real_time>53 962046156</real_time>
-      <wall_time>1617803711 270228409</wall_time>
-      <iterations>53259</iterations>
+      <sim_time>137 53000000</sim_time>
+      <real_time>62 905586115</real_time>
+      <wall_time>1618563622 965099878</wall_time>
+      <iterations>62025</iterations>
       <model name='aruco_cube_333'>
-        <pose frame=''>1.85833 0.223432 0.8625 0 0 -0.334402</pose>
+        <pose frame=''>1.85833 0.223432 0.8625 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>1.85833 0.223432 0.8625 0 0 -0.334402</pose>
+          <pose frame=''>1.85833 0.223432 0.8625 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0 -0 -0 0 -0 0</acceleration>
-          <wrench>-0 -0 -0 0 -0 0</wrench>
+          <acceleration>-0 0 0 -0 -0 -0</acceleration>
+          <wrench>-0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='aruco_marker_original_111'>
-        <pose frame=''>0.36354 -1.94089 0.853754 1.1e-05 2.6e-05 3.14</pose>
+        <pose frame=''>0.363688 -1.8479 0.826616 1.57 0 3.14</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>0.36354 -1.94089 0.853754 1.1e-05 2.6e-05 3.14</pose>
+          <pose frame=''>0.363688 -1.8479 0.826616 1.57 0 3.14</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -0.98 0 -0 0</wrench>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='cab_2_shelves'>
@@ -157,7 +157,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-0.132731 -0.155742 3.26261 -0 1.0898 -0.604853</pose>
+        <pose frame=''>-1.53868 1.73242 2.30858 0 0.3898 -0.740846</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -602,7 +602,7 @@
       <pose frame=''>1.1185 -2.16165 0 0 -0 0</pose>
     </model>
     <model name='aruco_marker_original_111'>
-      <static>0</static>
+      <static>1</static>
       <link name='marker'>
         <inertial>
           <mass>0.1</mass>

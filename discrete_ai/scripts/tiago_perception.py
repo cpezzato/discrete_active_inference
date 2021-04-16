@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from behavior_control.srv import symbolicPerception, symbolicPerceptionResponse
+from discrete_ai.srv import symbolicPerception, symbolicPerceptionResponse
 import rospy
 from math import pi
 from std_msgs.msg import Float64MultiArray, Float64

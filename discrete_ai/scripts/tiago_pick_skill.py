@@ -21,7 +21,7 @@ class tiagoPick(object):
 
         # Aruco
         self._aruco_pose = geometry_msgs.msg.PoseStamped()
-        self._aruco_id = 1008
+        self._aruco_id = 333
         self._aruco_found = False
         
         # Move it and gripper
@@ -60,8 +60,8 @@ class tiagoPick(object):
     def aruco_cb(self, msg):
         # Callback to update pose of detected aruco marker on the object
         for marker in msg.markers:
-            if marker.id == self._aruco_id or marker.id == 8 :
-                print('Received aruco pose')
+            if marker.id == self._aruco_id:
+                # print('Received aruco pose')
                 self._aruco_pose = marker.pose
                 if not self.grasping:
                     self.counter += 1
@@ -95,6 +95,7 @@ class tiagoPick(object):
         # Correct for frame gripper and object grasp point (aruco is on top)
         self.pose_pick.position.x -= 0.22
         self.pose_pick.position.z -= 0.03
+        self.pose_pick.position.y += 0.02 # aruco detection still not fixed by PAL Robotics
         self.pose_prepick.position = copy.deepcopy(self.pose_pick.position)
         self.pose_prepick.position.z += 0.25
 
@@ -102,6 +103,37 @@ class tiagoPick(object):
         ########
         # Add here + check if no aruco found
         ########
+
+
+
+        # Add table collision object
+        table_pose = geometry_msgs.msg.PoseStamped()
+        table_pose.header.frame_id = "map"
+        table_pose.pose.orientation.w = 1.0
+        table_pose.pose.position.x = 2.114
+        table_pose.pose.position.y = 0.024
+        table_pose.pose.position.z = 0.3
+        box_name = "table"
+        self.tiago_moveit.scene.add_box(box_name, table_pose, size=(1.0, 0.9, 0.8))
+
+        # Add cube collision object
+        box_pose = geometry_msgs.msg.PoseStamped()
+        box_pose.header.frame_id = "base_footprint"
+        box_pose.pose = copy.deepcopy(self._aruco_pose.pose)
+        rospy.loginfo("box_pose: %s", box_pose.pose)
+
+        box_height = 0.10
+        box_pose.pose.position.z -= box_height/2
+
+        box_pose.pose.orientation.x = 0.0
+        box_pose.pose.orientation.y = 0.0
+        box_pose.pose.orientation.z = 0.0
+        box_pose.pose.orientation.w = 1.0
+
+        box_name = "aruco_cube"
+        self.tiago_moveit.scene.add_box(box_name, box_pose, size=(0.05, 0.05, box_height))
+
+
         
         print('The pick pose is', self.pose_pick)
         
@@ -110,9 +142,19 @@ class tiagoPick(object):
         self.tiago_moveit.run(self.pose_prepick)
         self.tiago_moveit.run(self.pose_pick)
         self.tiago_gripper.run('close')
-        #self.tiago_moveit.add_collision_obj(self._aruco_pose)
+
+        # Attach collision object of box to gripper
+        grasping_group = "gripper_right"
+        touch_links = self.tiago_moveit.robot.get_link_names(group=grasping_group)
+        eef_link = self.tiago_moveit.group.get_end_effector_link()
+        self.tiago_moveit.scene.attach_box(eef_link, box_name, touch_links=touch_links)
+
+
         self.tiago_moveit.run(self.pose_prepick)
         self.tiago_moveit.run(self.pose_rest)
+
+        self.tiago_moveit.scene.remove_world_object('table')
+
 
         # Grasping terminated
         self.grasping = False

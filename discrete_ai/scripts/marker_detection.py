@@ -24,14 +24,15 @@ class detectMarker(object):
         self._aruco_pub = rospy.Publisher("/objects_poses/object", geometry_msgs.msg.Pose, queue_size=10)
         
         self._aruco_pose = geometry_msgs.msg.PoseStamped()
-        self._aruco_id = 1008
+        # self._aruco_id = 1008
+        self._aruco_id = 333
         self._aruco_found = False
 
 
     def aruco_cb(self, msg):
         # Callback to update pose of detected aruco marker on the object
         for marker in msg.markers:
-            if marker.id == self._aruco_id or marker.id == 8:
+            if marker.id == self._aruco_id or marker.id == 111:
                 self._aruco_found = True
                 self._aruco_pose = marker.pose
 
