@@ -1,4 +1,4 @@
-# discrete_active_inference
+# discrete_active_inference (Work in progress)
 
 Repository for active inference and behavior trees for discrete decision making. Please read the associated paper for more theorethical considerations about the algorithms.
 
