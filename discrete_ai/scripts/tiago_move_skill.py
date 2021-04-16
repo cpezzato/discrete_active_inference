@@ -21,12 +21,11 @@ class MoveBaseTiagoClientClass(object):
         goal.target_pose.header.stamp = rospy.Time.now()
         goal.target_pose.pose.position.x = current_goal.parameters.data[0]
         goal.target_pose.pose.position.y = current_goal.parameters.data[1]
-        goal.target_pose.pose.orientation.x = 0
-        goal.target_pose.pose.orientation.y = 0
-        goal.target_pose.pose.orientation.z = 0
-        goal.target_pose.pose.orientation.w = 1
+        goal.target_pose.pose.orientation.x = current_goal.parameters.data[3]
+        goal.target_pose.pose.orientation.y = current_goal.parameters.data[4]
+        goal.target_pose.pose.orientation.z = current_goal.parameters.data[5]
+        goal.target_pose.pose.orientation.w = current_goal.parameters.data[6]
         # rospy.loginfo('Goal sent!')
-
         print('Sending move base goal', goal)
         self.client.send_goal(goal)
         

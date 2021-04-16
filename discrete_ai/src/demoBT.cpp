@@ -10,7 +10,7 @@ static const char* tiago_test = R"(
 <root main_tree_to_execute = "MainTree" >
     <BehaviorTree ID="MainTree">
             <Sequence name="root">
-                    <AIP_isAt    goal="0; 2; 0.31; -0.57"/> 
+                    <AIP_isAt    goal="0; 2; 0.4; -0.2; 0; 0; 0; 0.707; 0.707"/>  <!-- State value; state index; x, y, z, quaternion xyzw -->
             </Sequence>
     </BehaviorTree>
 </root>
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 
     // Define the behavior tree from xml format
 //     auto tree = factory.createTreeFromText(tiago_pick_place_real);
-    auto tree = factory.createTreeFromText(tiago_pick_place_sim);
+    auto tree = factory.createTreeFromText(tiago_test);
 
     //auto tree = factory.createTreeFromFile("/home/corrado/simulations/my_ws/src/behavior_control/src/behaviors/xml_conflicts.xml");
     
