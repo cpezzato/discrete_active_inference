@@ -4,9 +4,9 @@ Repository for active inference and behavior trees for discrete decision making.
 
 ## Dependencies
 ***Simulation Environment***
-A singularity image will be provided through an external link soon.
+A singularity image can be downloaded from [here](https://drive.google.com/drive/folders/1DYuRWgCiiHCG4ck_7Pf_Kw4Kn-ZpZ-Oy?usp=sharing).
 
-To build the singularity yourself:
+Alternatively, you can build the singularity yourself:
 1. create a sub directory called 'pkgs' (in the `singularity_environment` directory)
 
    ```bash
