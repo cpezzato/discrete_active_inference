@@ -29,13 +29,13 @@ static const char* tiago_pick_place_real = R"(
 
  )";
 
- static const char* tiago_pick_place_sim = R"(
+static const char *tiago_pick_place_sim = R"(
 <root main_tree_to_execute = "MainTree" >
     <BehaviorTree ID="MainTree">
             <ReactiveSequence name="root">
-                    <AIP_isHolding    goal="0; 0; 1.3; 0.3; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
-                    <AIP_isAt    goal="0; 2; 0.3; -1.3"/> <!-- Location at x = 1.3, y = 0 -->
-                    <AIP_isPlacedAt    goal="0; 0; -1.3; 0; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
+                    <AIP_isHolding    goal="0; 0; 1.3; 0.3; 0; 0; 0; 0; 1; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
+                    <AIP_isAt    goal="0; 2; 0.3; -1.3; 0.0; 0.0; 0.0; -0.707; 0.707"/> <!-- State value; state index; x, y, z, quaternion xyzw -->
+                    <AIP_isPlacedAt    goal="0; 0; 0.3; -1.3; 0; 0; 0; -0.707; 0.707; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
             </ReactiveSequence>
     </BehaviorTree>
 </root>
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 
     // Define the behavior tree from xml format
 //     auto tree = factory.createTreeFromText(tiago_pick_place_real);
-    auto tree = factory.createTreeFromText(tiago_test);
+    auto tree = factory.createTreeFromText(tiago_pick_place_sim);
 
     //auto tree = factory.createTreeFromFile("/home/corrado/simulations/my_ws/src/behavior_control/src/behaviors/xml_conflicts.xml");
     

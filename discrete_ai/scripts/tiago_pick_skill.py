@@ -114,7 +114,7 @@ class tiagoPick(object):
         table_pose.pose.position.y = 0.024
         table_pose.pose.position.z = 0.3
         box_name = "table"
-        self.tiago_moveit.scene.add_box(box_name, table_pose, size=(1.0, 0.9, 0.8))
+        self.tiago_moveit.scene.add_box(box_name, table_pose, size=(1.0, 1.0, 0.8))
 
         # Add cube collision object
         box_pose = geometry_msgs.msg.PoseStamped()
@@ -143,6 +143,7 @@ class tiagoPick(object):
         self.tiago_moveit.run(self.pose_pick)
         self.tiago_gripper.run('close')
 
+        
         # Attach collision object of box to gripper
         grasping_group = "gripper_right"
         touch_links = self.tiago_moveit.robot.get_link_names(group=grasping_group)
