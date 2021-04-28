@@ -300,9 +300,9 @@ class AIPBTAction(object):
                 # rospy.loginfo('Sending new goal')
                 if action_to_perform == 4 and action_to_perform == self.old_selected_action and goal.parameters == self.old_goal_parameters:
                     pass
-                    print("Not sending same goal to move base")
+                    #print("Not sending same goal to move base")
                 else:
-                    print("Sending goal")
+                    #print("Sending goal")
                     action_client.send_goal(goal)
                 #print("Return status", action_client.get_state())
                 status_current_action = action_client.get_state()
