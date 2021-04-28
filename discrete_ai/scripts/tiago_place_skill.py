@@ -101,20 +101,12 @@ class tiagoPlace(object):
         self.pose_place.position.x -= 0.16
         self.pose_preplace.position.x -= 0.30
 
-
-        # Add the routine to look around
-        ########
-        # Add here + check if no aruco found
-        ########
                 
         # place routine
         self.tiago_moveit.run(self.pose_preplace)
         self.tiago_moveit.run(self.pose_place)
         self.tiago_gripper.run('open')
         self.tiago_moveit.run(self.pose_preplace)
-
-        #print('Preplace loc', self.pose_preplace.position)
-        #print('Place loc', self.pose_place.position)
 
         self.tiago_moveit.run(self.pose_rest)
 

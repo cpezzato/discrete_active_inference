@@ -32,9 +32,6 @@ class tiagoReachable(object):
         print("the received pose goal is", self.ee_pose)
         self.group.set_pose_target(self.ee_pose)
         plan = self.group.plan()
-        #plan = self.group.go(wait=True)
-
-        #print('the plan is', len(plan.joint_trajectory.points))
 
         if len(plan.joint_trajectory.points)>0:
             self.group.clear_pose_targets()

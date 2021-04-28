@@ -16,6 +16,7 @@ from tiago_gripper import GripperControl
 
 class tiagoPush(object):
     def __init__(self):
+        # Pushing with left arm. The current skill is just a set of waypoints but it can be substituted here with more advanced skills
         self.tiago_moveit = tiagoMoveit('left')
         self.tiago_gripper = GripperControl('left')
         
@@ -62,6 +63,6 @@ class tiagoPush(object):
         print('Object pushed')
 
     def get_state(self):
-        # To modify with the actual return status 
+        # To modify with the actual return status if available
         return 1
 

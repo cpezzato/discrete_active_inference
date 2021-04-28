@@ -35,7 +35,7 @@ class detectMarker(object):
             if marker.id == self._aruco_id or marker.id == 111:
                 self._aruco_found = True
                 self._aruco_pose = marker.pose
-
+                # Use fixed orientation, we do not really care with the current skills
                 self._aruco_pose.pose.orientation.x = 0.707
                 self._aruco_pose.pose.orientation.y = 0.0
                 self._aruco_pose.pose.orientation.z = 0.0

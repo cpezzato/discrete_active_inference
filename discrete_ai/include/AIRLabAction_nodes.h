@@ -7,20 +7,12 @@
 #include "std_msgs/Float64MultiArray.h"
 
 #include <ros/ros.h>
-#include <move_base_msgs/MoveBaseAction.h>
 #include <discrete_ai/AIPBTAction.h>
 #include <discrete_ai/symbolicPerception.h>
-
 #include <actionlib/client/simple_action_client.h>
 
 // In here we defne the templates for the actions that we are going to include
 // in the main file for behavior execution
-
-// Custom type of data
-struct Pose2D
-{
-    double x, y, theta;
-};
 
 // Standard message for AIPBT_server
 struct defaultAIP_port
@@ -38,25 +30,6 @@ inline void SleepMS(int ms)
 namespace BT
 {
 // Translating the string from xml to double numbers
-template <> inline
-Pose2D convertFromString(StringView key)
-{
-    // three real numbers separated by semicolons
-    auto parts = BT::splitString(key, ';');
-    if (parts.size() != 3)
-    {
-        throw BT::RuntimeError("invalid input)");
-    }
-    else
-    {
-        Pose2D output;
-        output.x     = convertFromString<double>(parts[0]);
-        output.y     = convertFromString<double>(parts[1]);
-        output.theta = convertFromString<double>(parts[2]);
-        return output;
-    }
-}
-
 template <> inline
 defaultAIP_port convertFromString(StringView key)
 {
@@ -80,101 +53,11 @@ defaultAIP_port convertFromString(StringView key)
     }
 }
 
-} // end namespace BT
+}
 
 namespace AIRLabNodes
 {
-
-// Simple check for testing
-BT::NodeStatus CheckBattery();
-BT::NodeStatus CheckConditionFalse();
-
-// Example of custom SyncActionNode (synchronous action)
-// with an input port.
-class ConditionisHolding : public BT::SyncActionNode
-{
-  public:
-    ConditionisHolding(const std::string& name, const BT::NodeConfiguration& config)
-      : BT::SyncActionNode(name, config)
-    {
-        _srv_client = n.serviceClient<discrete_ai::symbolicPerception>("symbolic_perception");
-    }
-
-    // You must override the virtual function tick()
-    BT::NodeStatus tick() override;
-
-    // It is mandatory to define this static method.
-    static BT::PortsList providedPorts()
-    {
-        return{ BT::InputPort<std::string>("message") };
-    }
-
-    private:
-    ros::NodeHandle n;
-    ros::ServiceClient _srv_client;
-    discrete_ai::symbolicPerception srv;
-};
-
-class ConditionisPlacedAt : public BT::SyncActionNode
-{
-  public:
-    ConditionisPlacedAt(const std::string& name, const BT::NodeConfiguration& config)
-      : BT::SyncActionNode(name, config)
-    {
-        _srv_client = n.serviceClient<discrete_ai::symbolicPerception>("symbolic_perception");
-    }
-
-    // You must override the virtual function tick()
-    BT::NodeStatus tick() override;
-
-    // It is mandatory to define this static method.
-    static BT::PortsList providedPorts()
-    {
-        return{ BT::InputPort<std::string>("message") };
-    }
-
-    private:
-    ros::NodeHandle n;
-    ros::ServiceClient _srv_client;
-    discrete_ai::symbolicPerception srv;
-};
-
-// This is an asynchronous operation that will run in a separate thread.
-// It requires the input port "goal".
-
-class MoveBaseAction : public BT::AsyncActionNode
-{
-  public:
-    MoveBaseAction(const std::string& name, const BT::NodeConfiguration& config)
-      : BT::AsyncActionNode(name, config),
-        _client("move_base", true)
-    {
-    }
-
-    static BT::PortsList providedPorts()
-    {
-        return{BT::InputPort<Pose2D>("goal") };
-    }
-
-    virtual BT::NodeStatus tick() override;
-
-    // This overloaded method is used to stop the execution of this node.
-    // This is called by the BT automatically, you just need to implement this.
-    // Whenever we provide an asynchronous action we need to provide a way to
-    // stop it
-    virtual void halt() override
-    {
-        _halt_requested.store(true);
-    }
-
-  private:
-    std::atomic_bool _halt_requested;
-    typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-    MoveBaseClient _client;
-};
-
-
-// Define the class which will contain te action client
+// This is an asynchronous action representing the "prior" action node
 class btAIPClient : public BT::AsyncActionNode
 {
   public:
@@ -206,44 +89,9 @@ class btAIPClient : public BT::AsyncActionNode
     myClient _client;
 };
 
-class MyDummyAction : public BT::AsyncActionNode
-{
-  public:
-    MyDummyAction(const std::string& name, const BT::NodeConfiguration& config)
-      : BT::AsyncActionNode(name, config) // "AIPBT_server" is the name of the server we want to build a client for
-    {
-    }
-
-    static BT::PortsList providedPorts()
-    {
-        return{BT::InputPort<defaultAIP_port>("goal") };
-    }
-
-    virtual BT::NodeStatus tick() override;
-
-    // This overloaded method is used to stop the execution of this node.
-    // This is called by the BT automatically, you just need to implement this.
-    // Whenever we provide an asynchronous action we need to provide a way to
-    // stop it
-    virtual void halt() override
-    {
-        _halt_requested.store(true);
-    }
-
-    private:
-    std::atomic_bool _halt_requested;
-};
-
 inline void RegisterNodes(BT::BehaviorTreeFactory& factory)
 {
-    factory.registerNodeType<MoveBaseAction>("MoveBase");
     factory.registerNodeType<btAIPClient>("AIP_");             // These are the names to use in xml
-    factory.registerSimpleCondition("CheckBattery", std::bind(CheckBattery));
-    factory.registerSimpleCondition("CheckConditionFalse", std::bind(CheckConditionFalse));
-    factory.registerNodeType<ConditionisHolding>("ConditionisHolding");
-    factory.registerNodeType<ConditionisPlacedAt>("ConditionisPlacedAt");
-    factory.registerNodeType<MyDummyAction>("MyDummyAction");
-
 }
 
 } // end namespace

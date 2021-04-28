@@ -11,17 +11,12 @@ import discrete_ai.msg         # Imports the custom generated messages
 from std_msgs.msg import Float64
 
 from discrete_ai.srv import *  # Import for symbolic_perception_service
-# from move_base_skill_moveit import MoveBaseClientClass
-# from pick_skill_moveit import PickClientClass
-# from place_on_plate_skill_moveit import PlaceOnPlateClientClass
-# from push_skill_moveit import PushClientClass
-# from place_skill_moveit import PlaceClientClass
-# from move_skill_moveit import MoveBaseDemoClientClass
-#from gripper_client import GripperClientClass
 from tiago_move_skill import MoveBaseTiagoClientClass
 from tiago_pick_skill import tiagoPick
 from tiago_place_skill import tiagoPlace
 from tiago_push_skill import tiagoPush
+from look_to_point import LookToPoint
+import geometry_msgs.msg
 
 # Service client for symbolic perception service, from which we retrieve mdp.d[] and mdp.s
 def symbolic_perception_client(state_index, parameters, isNew):
@@ -391,4 +386,13 @@ if __name__ == '__main__':
     action_name = ['Idle', 'Pick', 'PlaceOnPlate', 'Move_MPC', 'Move_base', 'Push', 'Place']
 
     server = AIPBTAction(rospy.get_name())
+
+    ## Initialize TIAGo head
+    head_control = LookToPoint()
+    point = geometry_msgs.msg.Point()
+    point.x = 1.0
+    point.y = 0.0
+    point.z = 0.5
+    head_control.run(point)
+
     rospy.spin()
