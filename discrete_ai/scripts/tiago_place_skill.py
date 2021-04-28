@@ -66,19 +66,11 @@ class tiagoPlace(object):
                 if not self.grasping:
                     self.counter += 1
 
-        if self.counter > 6:
+        if self.counter > 20:
             self._aruco_found = True
 
     def send_goal(self, pose_goal):
-
-        # Look around (To build a full octomap for obstacle avoidance with arm)
-        # head_control = LookToPoint()
-        # point = geometry_msgs.msg.Point()
-        # point.x = 1.0
-        # point.y = 0.0
-        # point.z = 0.0
-        # head_control.run(point)
-
+        
         # Wait until aruco marker is found (program can get stuck here!)
         while not self._aruco_found:
             rospy.loginfo('Looking for aruco!')
@@ -90,6 +82,16 @@ class tiagoPlace(object):
         self.grasping = True
         self._aruco_found = False
 
+        # Add shelf collision object
+        shelf_pose = geometry_msgs.msg.PoseStamped()
+        shelf_pose.header.frame_id = "map"
+        shelf_pose.pose.orientation.z = 1.0
+        shelf_pose.pose.position.x = 0.45
+        shelf_pose.pose.position.y = -2.2
+        shelf_pose.pose.position.z = 0.3
+        box_name = "shelf"
+        self.tiago_moveit.scene.add_box(box_name, shelf_pose, size=(1.0, 0.7, 0.9))
+
         # Populate the grasp and pre grasp poses from aruco
         self.pose_place.position = copy.deepcopy(self._aruco_pose.pose.position)
         self.pose_preplace.position = copy.deepcopy(self._aruco_pose.pose.position)
@@ -99,7 +101,7 @@ class tiagoPlace(object):
         self.pose_preplace.position.z += 0.21
 
         self.pose_place.position.x -= 0.16
-        self.pose_preplace.position.x -= 0.30
+        self.pose_preplace.position.x -= 0.20
 
                 
         # place routine

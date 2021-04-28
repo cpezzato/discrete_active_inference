@@ -30,9 +30,10 @@ def gazebo_callback(data):
     global paper_box_location
     global box_location
 
-    paper_box_location = [data.pose[-1].position.x, data.pose[-1].position.y, data.pose[-1].position.z]
-    box_location = [data.pose[-2].position.x, data.pose[-2].position.y, data.pose[-2].position.z]
-    #print('y loc', box_location[1])
+    # paper_box_location = [data.pose[-1].position.x, data.pose[-1].position.y, data.pose[-1].position.z]
+    # # aruco_cube_333 is the third entry of the array
+    # box_location = [data.pose[2].position.x, data.pose[2].position.y, data.pose[2].position.z]
+    # print('y loc', box_location[1])
 
 def paper_box_pose_callback(data):
     global paper_box_location
@@ -42,7 +43,6 @@ def object_pose_callback(data):
     global box_location
     global box_pose 
 
-    # Compensate for gripper length
     box_location =  [data.position.x, data.position.y, data.position.z]
     box_pose = data
     #print('Box Location', box_location)
@@ -146,12 +146,12 @@ def handle_symbolic_perception_request(req):
             
         if req.state_index == 4:  # Check if obj is placed at the location
             if np.linalg.norm(np.array(box_location)-np.array(desired_place_loc)) < 0.15:  # To be changed with a better metric, now it is application specific
-                #print('Obj is placed at loc')
+                print('Obj is placed at loc')
                 o_isPlacedAt = 0
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)
             else:
-                #print('Obj is NOT placed at loc')
+                print('Obj is NOT placed at loc')
                 o_isPlacedAt = 1
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)
@@ -212,8 +212,8 @@ if __name__ == "__main__":
     p = Pose()
     box_detection = detectMarker()
     tiago_reach = tiagoReachable('right')
-
-    desired_place_loc = [3.883, 0.838721, 0.775]
+    # To be updated to come from the BT
+    desired_place_loc = [3.45, -1.88, 0.9]
 
     # 3 states, 6 total (3 for perception only and 3 for action only)
     mdp_h = demo_templates.MDPIsHolding('isHolding_se')  # State for active inference routines, state_estimation
