@@ -45,7 +45,7 @@ def object_pose_callback(data):
     # Compensate for gripper length
     box_location =  [data.position.x, data.position.y, data.position.z]
     box_pose = data
-    print('Box Location', box_location)
+    #print('Box Location', box_location)
     #print('Reachable Flag', reachableFlag)
 
 def euler_to_quaternion(roll, pitch, yaw):
@@ -69,8 +69,8 @@ def handle_symbolic_perception_request(req):
     # Selecting what pose is required by the current goal state
     ikErrorFlag = -1  # Set error flag to -1, meaning the IK service has not been used yet
 
-    print("Base location", base_location)
-    print("Box location", box_location)
+    #print("Base location", base_location)
+    #print("Box location", box_location)
 
     # Perform manipulation of the sensed states to determine the symbolic observation
     # The order of the states is the following [mdp_h, mdp_r, mdp_l]
@@ -80,12 +80,12 @@ def handle_symbolic_perception_request(req):
         if req.state_index == 0:  # Check if it is holding according to fingers' aperture
             #if np.abs(fingers_state[0] + fingers_state[1]-0.06) < 0.01:  # Less than 6cm
             if np.abs(fingers_state[0] + fingers_state[1]) < 0.065 and np.abs(fingers_state[0] + fingers_state[1])>0.02:
-                print('Is holding')
+                #print('Is holding')
                 o_isHolding = 0
                 # Setting observation
                 setattr(mdp_h, 'o', o_isHolding)  # 0 = Holding, 1 = notHolding
             else:
-                print('Is Not holding')
+                #print('Is Not holding')
                 o_isHolding = 1
                 # Setting observation
                 setattr(mdp_h, 'o', o_isHolding)  # 0 = Holding, 1 = notHolding
@@ -105,12 +105,12 @@ def handle_symbolic_perception_request(req):
 
             #if ikErrorFlag >= 0:
             if reachableFlag:
-                print('Is reachable')
+                #print('Is reachable')
                 o_isReachable = 0
                 # Setting observation
                 setattr(mdp_r, 'o', o_isReachable)  # 0 = Holding, 1 = notHolding
             else:
-                print('Is Not reachable')
+                #print('Is Not reachable')
                 o_isReachable = 1
                 # Setting observation
                 setattr(mdp_r, 'o', o_isReachable)  # 0 = Reachable, 1 = notReachable
@@ -118,16 +118,16 @@ def handle_symbolic_perception_request(req):
             diff_dist = [base_location[0] - req.parameters.data[0], base_location[1] - req.parameters.data[1]]
             # TODO change to a more reliable way of quering the symbolic state, you should not be quetying all the states at all the time since you can have different goals
             #diff_dist = [base_location[0] - 3.7, base_location[1] - 0]
-            print('Base Location', base_location)
+            #print('Base Location', base_location)
             #print('Goal Location [3.7, 0]')
-            print('Diff dist', diff_dist)
+            #print('Diff dist', diff_dist)
             if np.linalg.norm(diff_dist) < 0.15:
-                print('Is at')
+                #print('Is at')
                 o_isAt = 0
                 # Setting observation
                 setattr(mdp_l, 'o', o_isAt)  # 0 = At, 1 = notAt
             else:
-                print('Is Not at')
+                #print('Is Not at')
                 o_isAt = 1
                 # Setting observation
                 setattr(mdp_l, 'o', o_isAt)  # 0 = At, 1 = notAt
@@ -146,12 +146,12 @@ def handle_symbolic_perception_request(req):
             
         if req.state_index == 4:  # Check if obj is placed at the location
             if np.linalg.norm(np.array(box_location)-np.array(desired_place_loc)) < 0.15:  # To be changed with a better metric, now it is application specific
-                print('Obj is placed at loc')
+                #print('Obj is placed at loc')
                 o_isPlacedAt = 0
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)
             else:
-                print('Obj is NOT placed at loc')
+                #print('Obj is NOT placed at loc')
                 o_isPlacedAt = 1
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)

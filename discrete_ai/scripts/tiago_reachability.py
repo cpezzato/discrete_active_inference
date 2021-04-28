@@ -29,14 +29,14 @@ class tiagoReachable(object):
         self.ee_pose.position.y = pose_goal.position.y
         self.ee_pose.position.z = pose_goal.position.z
 
-        print("the received pose goal is", self.ee_pose)
+        #print("the received pose goal is", self.ee_pose)
         self.group.set_pose_target(self.ee_pose)
         plan = self.group.plan()
 
         if len(plan.joint_trajectory.points)>0:
             self.group.clear_pose_targets()
-            rospy.loginfo('Reachable')
+            #rospy.loginfo('Reachable')
             return True
         else:
-            rospy.logfatal('Not reachable')
+            #rospy.logfatal('Not reachable')
             return False

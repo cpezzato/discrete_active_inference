@@ -33,8 +33,8 @@ class tiagoPick(object):
         self.pose_pick = geometry_msgs.msg.Pose()
         
         self.pose_rest.position.x = 0.2
-        self.pose_rest.position.y = -0.2
-        self.pose_rest.position.z = 0.8
+        self.pose_rest.position.y = -0.4
+        self.pose_rest.position.z = 0.6
         self.pose_rest.orientation.x = 0.707
         self.pose_rest.orientation.y = 0.0
         self.pose_rest.orientation.z = 0.0
@@ -104,8 +104,6 @@ class tiagoPick(object):
         # Add here + check if no aruco found
         ########
 
-
-
         # Add table collision object
         table_pose = geometry_msgs.msg.PoseStamped()
         table_pose.header.frame_id = "map"
@@ -120,7 +118,7 @@ class tiagoPick(object):
         box_pose = geometry_msgs.msg.PoseStamped()
         box_pose.header.frame_id = "base_footprint"
         box_pose.pose = copy.deepcopy(self._aruco_pose.pose)
-        rospy.loginfo("box_pose: %s", box_pose.pose)
+        #rospy.loginfo("box_pose: %s", box_pose.pose)
 
         box_height = 0.10
         box_pose.pose.position.z -= box_height/2
@@ -152,7 +150,7 @@ class tiagoPick(object):
 
 
         self.tiago_moveit.run(self.pose_prepick)
-        self.tiago_moveit.run(self.pose_rest)
+        #self.tiago_moveit.run(self.pose_rest)
 
         self.tiago_moveit.scene.remove_world_object('table')
 

@@ -88,8 +88,9 @@ def adaptive_action_selection(goal, _new_prior):
         # Assign the prior coming from the goal in the BT
         all_MDP[goal.state_index].C[goal.prior] = 1
 
-    for mdp in range(n_mdps):
-        print("State", state_names[mdp], "C = ", all_MDP[mdp].C)
+    # Printing the current MDP model
+    # for mdp in range(n_mdps):
+    #     print("State", state_names[mdp], "C = ", all_MDP[mdp].C)
 
     # Performing active inference only on MDPs with active prior (if elements in .C are > 0)
     # Initialize variable to contain the selected actions from the active mdps
@@ -289,7 +290,6 @@ class AIPBTAction(object):
                     # Reset here the prior of a cancelled goal
                     if self.old_selected_action == 3 and all_MDP[1].C[0] > 1:  # Move_MPC
                         all_MDP[1].C[0] = 0
-
                 # Send the goal if action is not idle
                 #print(action_to_perform)
                 #print(self.action_clients)
@@ -298,8 +298,13 @@ class AIPBTAction(object):
             if action_to_perform > 0:
                 action_client = self.action_clients[action_to_perform-1]
                 # rospy.loginfo('Sending new goal')
-                action_client.send_goal(goal)
-                print("Return status", action_client.get_state())
+                if action_to_perform == 4 and action_to_perform == self.old_selected_action and goal.parameters == self.old_goal_parameters:
+                    pass
+                    print("Not sending same goal to move base")
+                else:
+                    print("Sending goal")
+                    action_client.send_goal(goal)
+                #print("Return status", action_client.get_state())
                 status_current_action = action_client.get_state()
 
             # WHEN THE PERCEPTION NODE WILL BE AVAILABLE, status_AIPBT SHOULD BE ASSIGNED ONLY IF IT HAS FAILED OR PREEMPTED
