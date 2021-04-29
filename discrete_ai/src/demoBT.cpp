@@ -10,7 +10,7 @@ static const char *tiago_stock_shelf = R"(
 <root main_tree_to_execute = "MainTree" >
     <BehaviorTree ID="MainTree">
             <ReactiveSequence name="root">
-                    <AIP_isHolding      goal="0; 0; 1.3; 0.3; 0; 0; 0; 0; 1; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
+                    <AIP_isHolding      goal="0; 0; 1.1; 0.3; 0; 0; 0; 0; 1; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
                     <AIP_isAt           goal="0; 2; 0.3; -1.1; 0; 0; 0; -0.707; 0.707"/> <!-- State value; state index; x, y, z, quaternion xyzw -->
                     <AIP_isPlacedAt     goal="0; 4; 0.3; -1.1; 0; 0; 0; -0.707; 0.707; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
             </ReactiveSequence>

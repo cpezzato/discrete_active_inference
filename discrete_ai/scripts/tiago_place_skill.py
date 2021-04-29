@@ -97,10 +97,10 @@ class tiagoPlace(object):
         self.pose_preplace.position = copy.deepcopy(self._aruco_pose.pose.position)
 
         # Correct for frame gripper and object grasp point (aruco is on top)
-        self.pose_place.position.z += 0.21
+        self.pose_place.position.z += 0.15
         self.pose_preplace.position.z += 0.21
 
-        self.pose_place.position.x -= 0.16
+        self.pose_place.position.x -= 0.20
         self.pose_preplace.position.x -= 0.20
 
                 

@@ -65,10 +65,7 @@ After building the image, it can be `shell`ed into using the regular Singularity
 singularity shell /path/to/discrete_ai_tiago.simg
 ```
 
-where `NN-XX` is the version of the image.
-
 Sourcing `/opt/ros/melodic/setup.bash` will also activate all the tiago dependencies installed on the image.
-
 
 
 ***Behavior trees library***

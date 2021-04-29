@@ -117,7 +117,7 @@ class tiagoPick(object):
         table_pose = geometry_msgs.msg.PoseStamped()
         table_pose.header.frame_id = "map"
         table_pose.pose.orientation.w = 1.0
-        table_pose.pose.position.x = 2.2
+        table_pose.pose.position.x = 2.3
         table_pose.pose.position.y = 0.024
         table_pose.pose.position.z = 0.3
         box_name = "table"

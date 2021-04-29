@@ -32,7 +32,7 @@ def gazebo_callback(data):
 
     # paper_box_location = [data.pose[-1].position.x, data.pose[-1].position.y, data.pose[-1].position.z]
     # # aruco_cube_333 is the third entry of the array
-    # box_location = [data.pose[2].position.x, data.pose[2].position.y, data.pose[2].position.z]
+    box_location = [data.pose[2].position.x, data.pose[2].position.y, data.pose[2].position.z]
     # print('y loc', box_location[1])
 
 def paper_box_pose_callback(data):
@@ -43,7 +43,7 @@ def object_pose_callback(data):
     global box_location
     global box_pose 
 
-    box_location =  [data.position.x, data.position.y, data.position.z]
+    #box_location =  [data.position.x, data.position.y, data.position.z]
     box_pose = data
     #print('Box Location', box_location)
     #print('Reachable Flag', reachableFlag)
@@ -145,13 +145,16 @@ def handle_symbolic_perception_request(req):
             #     setattr(mdp_e, 'o', o_isSpotEmpty)  # 1 = notEmpty
             
         if req.state_index == 4:  # Check if obj is placed at the location
-            if np.linalg.norm(np.array(box_location)-np.array(desired_place_loc)) < 0.15:  # To be changed with a better metric, now it is application specific
+            dist_from_place = np.linalg.norm(np.array(box_location)-np.array(desired_place_loc))
+            if dist_from_place < 0.15:  # To be changed with a better metric, now it is application specific
                 print('Obj is placed at loc')
                 o_isPlacedAt = 0
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)
             else:
                 print('Obj is NOT placed at loc')
+                print('Distance:', dist_from_place)
+                print('Box location', box_location)
                 o_isPlacedAt = 1
                 # Setting observation
                 setattr(mdp_p, 'o', o_isPlacedAt)
@@ -213,7 +216,7 @@ if __name__ == "__main__":
     box_detection = detectMarker()
     tiago_reach = tiagoReachable('right')
     # To be updated to come from the BT
-    desired_place_loc = [3.45, -1.88, 0.9]
+    desired_place_loc = [0.345, -1.88, 0.9]
 
     # 3 states, 6 total (3 for perception only and 3 for action only)
     mdp_h = demo_templates.MDPIsHolding('isHolding_se')  # State for active inference routines, state_estimation

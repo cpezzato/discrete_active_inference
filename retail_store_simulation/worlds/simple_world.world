@@ -102,10 +102,10 @@
         </link>
       </model>
       <model name='aruco_marker_original_111'>
-        <pose frame=''>0.363688 -1.8479 0.826616 1.57 0 3.14</pose>
+        <pose frame=''>0.363688 -1.87 0.8547 0 0 3.14</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>0.363688 -1.8479 0.826616 1.57 0 3.14</pose>
+          <pose frame=''>0.363688 -1.87 0.8547 0 0 3.14</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -655,7 +655,7 @@
         <gravity>1</gravity>
         <enable_wind>0</enable_wind>
       </link>
-      <pose frame=''>0.913864 -1.7688 0 0 -0 0</pose>
+      <pose frame=''>z -1.7688 0 0 -0 0</pose>
     </model>
   </world>
 </sdf>
