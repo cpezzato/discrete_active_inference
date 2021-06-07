@@ -6,36 +6,13 @@
 
 using namespace BT;
 
-static const char* tiago_test = R"(
-<root main_tree_to_execute = "MainTree" >
-    <BehaviorTree ID="MainTree">
-            <Sequence name="root">
-                    <AIP_isAt    goal="0; 2; 0.31; -0.57"/> 
-            </Sequence>
-    </BehaviorTree>
-</root>
- )";
-
-static const char* tiago_pick_place_real = R"(
+static const char *tiago_stock_shelf = R"(
 <root main_tree_to_execute = "MainTree" >
     <BehaviorTree ID="MainTree">
             <ReactiveSequence name="root">
-                    <AIP_isHolding    goal="0; 0; 0.56; -0.4; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
-                    <AIP_isAt    goal="0; 2; 2.6; 0.93"/> <!-- Location at x = 2.4, y = 1 -->
-                    <AIP_isPlacedAt    goal="0; 4; 2.6; 0.93; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
-            </ReactiveSequence>
-    </BehaviorTree>
-</root>
-
- )";
-
- static const char* tiago_pick_place_sim = R"(
-<root main_tree_to_execute = "MainTree" >
-    <BehaviorTree ID="MainTree">
-            <ReactiveSequence name="root">
-                    <AIP_isHolding    goal="0; 0; 1.3; 0; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
-                    <!-- <AIP_isAt    goal="0; 2; 1.3; 0"/> <!-- Location at x = 1.3, y = 0>
-                    <AIP_isHolding    goal="0; 0; -1.3; 0; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
+                    <AIP_isHolding      goal="0; 0; 1.1; 0.3; 0; 0; 0; 0; 1; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
+                    <AIP_isAt           goal="0; 2; 0.3; -1.1; 0; 0; 0; -0.707; 0.707"/> <!-- State value; state index; x, y, z, quaternion xyzw -->
+                    <AIP_isPlacedAt     goal="0; 4; 0.3; -1.1; 0; 0; 0; -0.707; 0.707; 1;"/> <!-- State value; state index; x_obj_loc; y_obj_loc; object index -->
             </ReactiveSequence>
     </BehaviorTree>
 </root>
@@ -43,12 +20,7 @@ static const char* tiago_pick_place_real = R"(
  )";
 
 //  USAGE AIP_*: prior (0 or 1); state_index; parameters[*]
-//  States order: isHolding, isReachable, isAt (indexes 0, 1, 2)
-
-//  Parameters:
-//  isHolding: (x; y; z; obj_id) object id, and position of the object
-//  isReachable: (x; y) location of the base
-//  isAt: (x; y) location of the base
+//  States indexes: isHolding, isReachable, isAt, isPlacedAt (indexes 0, 1, 2, 4)
 
 int main(int argc, char **argv)
 {
@@ -58,27 +30,19 @@ int main(int argc, char **argv)
     BT::BehaviorTreeFactory factory;
     // Register the needed actions into the factory
     using namespace AIRLabNodes;
-    factory.registerNodeType<MoveBaseAction>("MoveBase");
     // Register here the active inference nodes. They are all of the same type <btAIPclient> action.
     // The only thing that changes are the parameters passed through the port, in which you indicate
     // the state index, the desired prior, and the parameters to execute an action. These are according to documentation
     factory.registerNodeType<btAIPClient>("AIP_isAt");             // These are the names to use in xml
     factory.registerNodeType<btAIPClient>("AIP_isHolding");        // These are the names to use in xml
-    factory.registerNodeType<btAIPClient>("AIP_isSpotEmpty");        // These are the names to use in xml
+    //factory.registerNodeType<btAIPClient>("AIP_isSpotEmpty");        // These are the names to use in xml
     factory.registerNodeType<btAIPClient>("AIP_isPlacedAt");        // These are the names to use in xml
 
-    factory.registerSimpleCondition("BatteryOK", std::bind(CheckBattery));
-    factory.registerNodeType<ConditionisHolding>("ConditionisHolding");
-    factory.registerNodeType<ConditionisPlacedAt>("ConditionisPlacedAt");
-    factory.registerSimpleCondition("FalseCondition", std::bind(CheckConditionFalse));
-    factory.registerNodeType<MyDummyAction>("MyDummyAction");
-
-
     // Define the behavior tree from xml format
-    auto tree = factory.createTreeFromText(tiago_pick_place_real);
-    //auto tree = factory.createTreeFromText(tiago_pick_place_sim);
+    auto tree = factory.createTreeFromText(tiago_stock_shelf);
 
-    //auto tree = factory.createTreeFromFile("/home/corrado/simulations/my_ws/src/behavior_control/src/behaviors/xml_conflicts.xml");
+    // You can also get your behavior tree from xml file
+    //auto tree = factory.createTreeFromFile("/ABSOLUTE_PATH_TO/stock_shelf.xml");
     
     // Log to keep track of the behavior tree status on the terminal
     BT::StdCoutLogger logger_cout(tree);

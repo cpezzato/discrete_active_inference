@@ -1,7 +1,0 @@
-<root main_tree_to_execute = "MainTree" >
-    <BehaviorTree ID="MainTree">
-            <Sequence name="root">
-                    <AIP_isAt    goal="0; 2; 1.34; -0.03"/>
-            </Sequence>
-    </BehaviorTree>
-</root>

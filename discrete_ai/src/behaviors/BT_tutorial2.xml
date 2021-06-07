@@ -1,9 +1,0 @@
- <root>
-     <BehaviorTree>
-        <Sequence name="root">
-            <SaySomething     message="start thinking..." />
-            <ThinkWhatToSay   text="{the_answer}"/>
-            <SaySomething     message="{the_answer}" />
-        </Sequence>
-     </BehaviorTree>
- </root>

@@ -244,7 +244,7 @@ class MDPIsPlacedAt:
                                     [0, 0]])
         # Preconditions of the actions above
         # ----------------------------------------------------------
-        self.preconditions = np.zeros((2, 2, 2)) - 1	    # No preconditions foi idle
+        self.preconditions = np.zeros((2, 2, 2)) - 1	    # No preconditions for idle
         # precondition for place at is that the hand is empty
         self.preconditions[:, :, 1] = np.array([[3, 0],  # isSpotEmpty: state 3 value 0
                                                 [0, 0]])  # isHolding

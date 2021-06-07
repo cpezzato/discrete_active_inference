@@ -1,0 +1,13 @@
+# https://stackoverflow.com/questions/52738888/converting-docker-tar-file-into-a-singularity-image
+# https://github.com/sylabs/singularity/issues/1537
+
+# TODO: prune image to delete everything we don't need (documentation directories, etc)
+
+Bootstrap: docker
+Registry: localhost:5000
+Namespace:
+From: ro47014:20-10-3
+
+%environment
+    # avoid https://github.com/ros/urdfdom_headers/issues/41
+    export ROSCONSOLE_FORMAT='[${node}] [${severity}] [${time}]: ${message}'

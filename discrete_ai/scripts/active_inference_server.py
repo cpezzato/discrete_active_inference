@@ -7,21 +7,16 @@ from math import pi
 import copy
 import AIP                          # Module for active inference routine
 import demo_templates               # Module for action templates and active inference states
-import behavior_control.msg         # Imports the custom generated messages
+import discrete_ai.msg         # Imports the custom generated messages
 from std_msgs.msg import Float64
 
-from behavior_control.srv import *  # Import for symbolic_perception_service
-# from move_base_skill_moveit import MoveBaseClientClass
-# from pick_skill_moveit import PickClientClass
-# from place_on_plate_skill_moveit import PlaceOnPlateClientClass
-# from push_skill_moveit import PushClientClass
-# from place_skill_moveit import PlaceClientClass
-# from move_skill_moveit import MoveBaseDemoClientClass
-#from gripper_client import GripperClientClass
+from discrete_ai.srv import *  # Import for symbolic_perception_service
 from tiago_move_skill import MoveBaseTiagoClientClass
 from tiago_pick_skill import tiagoPick
 from tiago_place_skill import tiagoPlace
 from tiago_push_skill import tiagoPush
+from look_to_point import LookToPoint
+import geometry_msgs.msg
 
 # Service client for symbolic perception service, from which we retrieve mdp.d[] and mdp.s
 def symbolic_perception_client(state_index, parameters, isNew):
@@ -93,8 +88,9 @@ def adaptive_action_selection(goal, _new_prior):
         # Assign the prior coming from the goal in the BT
         all_MDP[goal.state_index].C[goal.prior] = 1
 
-    for mdp in range(n_mdps):
-        print("State", state_names[mdp], "C = ", all_MDP[mdp].C)
+    # Printing the current MDP model
+    # for mdp in range(n_mdps):
+    #     print("State", state_names[mdp], "C = ", all_MDP[mdp].C)
 
     # Performing active inference only on MDPs with active prior (if elements in .C are > 0)
     # Initialize variable to contain the selected actions from the active mdps
@@ -204,15 +200,15 @@ def adaptive_action_selection(goal, _new_prior):
 # Main class for action selection using active inference
 class AIPBTAction(object):
     # Create messages that are used to publish feedback and result
-    _feedback = behavior_control.msg.AIPBTFeedback()
-    _result = behavior_control.msg.AIPBTResult()
+    _feedback = discrete_ai.msg.AIPBTFeedback()
+    _result = discrete_ai.msg.AIPBTResult()
 
     # Class constructor
     def __init__(self, name):
         rospy.loginfo('Server initialized...')
         self._action_name = name
         # Create SimpleActionServer
-        self._as = actionlib.SimpleActionServer(self._action_name, behavior_control.msg.AIPBTAction,
+        self._as = actionlib.SimpleActionServer(self._action_name, discrete_ai.msg.AIPBTAction,
                                                 execute_cb=self.execute_cb, auto_start=False)
         self._as.start()
 
@@ -221,10 +217,10 @@ class AIPBTAction(object):
         self.old_goal_parameters = []
 
         # Defining the action clients for non blocking execution
-        # nonblocking_place_plate_client = actionlib.SimpleActionClient('nonBlockingPlaceOnPlateAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_place_client = actionlib.SimpleActionClient('nonBlockingPlaceAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_pick_client = actionlib.SimpleActionClient('nonBlockingPickAction', behavior_control.msg.AIPBTAction)
-        # nonblocking_push_client = actionlib.SimpleActionClient('nonBlockingPushAction', behavior_control.msg.AIPBTAction)
+        # nonblocking_place_plate_client = actionlib.SimpleActionClient('nonBlockingPlaceOnPlateAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_place_client = actionlib.SimpleActionClient('nonBlockingPlaceAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_pick_client = actionlib.SimpleActionClient('nonBlockingPickAction', discrete_ai.msg.AIPBTAction)
+        # nonblocking_push_client = actionlib.SimpleActionClient('nonBlockingPushAction', discrete_ai.msg.AIPBTAction)
 
         # Create client
         # self.action1 = nonblocking_pick_client
@@ -294,7 +290,6 @@ class AIPBTAction(object):
                     # Reset here the prior of a cancelled goal
                     if self.old_selected_action == 3 and all_MDP[1].C[0] > 1:  # Move_MPC
                         all_MDP[1].C[0] = 0
-
                 # Send the goal if action is not idle
                 #print(action_to_perform)
                 #print(self.action_clients)
@@ -303,8 +298,13 @@ class AIPBTAction(object):
             if action_to_perform > 0:
                 action_client = self.action_clients[action_to_perform-1]
                 # rospy.loginfo('Sending new goal')
-                action_client.send_goal(goal)
-                print("Return status", action_client.get_state())
+                if action_to_perform == 4 and action_to_perform == self.old_selected_action and goal.parameters == self.old_goal_parameters:
+                    pass
+                    #print("Not sending same goal to move base")
+                else:
+                    #print("Sending goal")
+                    action_client.send_goal(goal)
+                #print("Return status", action_client.get_state())
                 status_current_action = action_client.get_state()
 
             # WHEN THE PERCEPTION NODE WILL BE AVAILABLE, status_AIPBT SHOULD BE ASSIGNED ONLY IF IT HAS FAILED OR PREEMPTED
@@ -391,4 +391,13 @@ if __name__ == '__main__':
     action_name = ['Idle', 'Pick', 'PlaceOnPlate', 'Move_MPC', 'Move_base', 'Push', 'Place']
 
     server = AIPBTAction(rospy.get_name())
+
+    ## Initialize TIAGo head
+    head_control = LookToPoint()
+    point = geometry_msgs.msg.Point()
+    point.x = 1.0
+    point.y = 0.0
+    point.z = 0.5
+    head_control.run(point)
+
     rospy.spin()

@@ -30,9 +30,9 @@ class LookToPoint():
 
         # Launch Client and wait for server
         self.client = actionlib.SimpleActionClient('/head_controller/point_head_action', PointHeadAction)
-        rospy.loginfo('Waiting for server...')
+        rospy.loginfo('Waiting for server for head control...')
         self.client.wait_for_server()
-    
+        rospy.loginfo('Server found...')
         self.tf_l = tf.TransformListener()
         rospy.sleep(2.0)
 
@@ -73,3 +73,4 @@ class LookToPoint():
         self.client.send_goal(goal.goal)  
         rospy.loginfo('Waiting for result...')
         self.client.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.loginfo('Goal achieved...')
