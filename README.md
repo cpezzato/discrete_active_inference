@@ -65,8 +65,17 @@ After building the image, it can be `shell`ed into using the regular Singularity
 singularity shell /path/to/discrete_ai_tiago.simg
 ```
 
-Sourcing `/opt/ros/melodic/setup.bash` will also activate all the tiago dependencies installed on the image.
+Use the flagfor nvidia drivers if applicable:
 
+```bash
+singularity shell --nv /path/to/discrete_ai_tiago.simg
+```
+
+Then `/opt/ros/melodic/setup.bash` will also activate all the tiago dependencies installed on the image.
+
+```bash
+source /opt/ros/melodic/setup.bash
+```
 
 ***Behavior trees library***
 These are the steps you need to follow to be able to run these tutorials in Ubuntu. They have been tested in Ubuntu 18.04 with ROS Mlodic. 
@@ -90,13 +99,18 @@ This repositiry contains a Matlab example and a ros package for active inference
 - *example.m* example of use of active inference for discrete decision making in a robotic case where conflicts and preconditions checks are required. A robot is assumed to be able to navigate to a point (MoveBase), reach a location with its end effector (Move MPC), and pick and place things. Actions have preconditions and are assumed not instantaneous
 
 **ROS:**
-The ROS package contains the python implementation and an example use with TIAGo (TO BE ADDED)
+The ROS package contains the python implementation and an example use with TIAGo. Create a new workspace, clone this repo in the src folder and build it with catkin build. Open a Singularity shell as explained above, source the newly created workspace, and use the commands below.
 
-## How to run
+## How to run a simple example with TIAGo
 
 Run the simulation, the perception, the decision making, and the demo:
 
     roslaunch retail_store_simulation tiago_simulation.launch
     rosrun discrete_ai tiago_perception.py
     rosrun discrete_ai active_inference_server.py
+
+From a terminal outside the sngularity image run the behavior tree
+
+```bash
     rosrun discrete_ai demo_executeBT
+```

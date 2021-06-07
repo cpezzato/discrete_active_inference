@@ -17,6 +17,9 @@ from tiago_reachability import tiagoReachable
 def gripper_callback(data):
     global fingers_state
     # Left arm for holding stuff
+    #fingers_state = [data.position[14], data.position[15]]
+
+    #Right gripper
     fingers_state = [data.position[16], data.position[17]]
     #print('Fingers state', fingers_state)
 

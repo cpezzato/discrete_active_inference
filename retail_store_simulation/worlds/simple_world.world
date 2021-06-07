@@ -92,10 +92,10 @@
       <wall_time>1618563622 965099878</wall_time>
       <iterations>62025</iterations>
       <model name='aruco_cube_333'>
-        <pose frame=''>1.85833 0.223432 0.8625 0 -0 0</pose>
+        <pose frame=''>1.85 0.12 0.8625 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>1.85833 0.223432 0.8625 0 -0 0</pose>
+          <pose frame=''>1.85 0.12 0.8625 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>-0 0 0 -0 -0 -0</acceleration>
           <wrench>-0 0 0 0 -0 0</wrench>

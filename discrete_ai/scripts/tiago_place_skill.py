@@ -32,9 +32,9 @@ class tiagoPlace(object):
         self.pose_rest = geometry_msgs.msg.Pose()
         self.pose_place = geometry_msgs.msg.Pose()
         
-        self.pose_rest.position.x = 0.2
-        self.pose_rest.position.y = -0.2
-        self.pose_rest.position.z = 0.8
+        self.pose_rest.position.x = 0.3
+        self.pose_rest.position.y = -0.4
+        self.pose_rest.position.z = 0.7
         self.pose_rest.orientation.x = 0.707
         self.pose_rest.orientation.y = 0.0
         self.pose_rest.orientation.z = 0.0
