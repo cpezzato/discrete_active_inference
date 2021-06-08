@@ -32,8 +32,8 @@ class tiagoPlace(object):
         self.pose_rest = geometry_msgs.msg.Pose()
         self.pose_place = geometry_msgs.msg.Pose()
         
-        self.pose_rest.position.x = 0.3
-        self.pose_rest.position.y = -0.4
+        self.pose_rest.position.x = 0.2
+        self.pose_rest.position.y = -0.3
         self.pose_rest.position.z = 0.7
         self.pose_rest.orientation.x = 0.707
         self.pose_rest.orientation.y = 0.0
@@ -61,7 +61,7 @@ class tiagoPlace(object):
         # Callback to update pose of detected aruco marker on the object
         for marker in msg.markers:
             if marker.id == self._aruco_id:
-                print('Received aruco pose, marker ID', marker.id)
+                #print('Received aruco pose, marker ID', marker.id)
                 self._aruco_pose = marker.pose
                 if not self.grasping:
                     self.counter += 1
@@ -90,7 +90,7 @@ class tiagoPlace(object):
         shelf_pose.pose.position.y = -2.2
         shelf_pose.pose.position.z = 0.3
         box_name = "shelf"
-        self.tiago_moveit.scene.add_box(box_name, shelf_pose, size=(1.0, 0.7, 0.9))
+        self.tiago_moveit.scene.add_box(box_name, shelf_pose, size=(1.0, 0.8, 0.76))
 
         # Populate the grasp and pre grasp poses from aruco
         self.pose_place.position = copy.deepcopy(self._aruco_pose.pose.position)
@@ -103,7 +103,7 @@ class tiagoPlace(object):
         self.pose_place.position.x -= 0.20
         self.pose_preplace.position.x -= 0.20
 
-                
+        print('pre-place pose is', self.pose_preplace)    
         # place routine
         self.tiago_moveit.run(self.pose_preplace)
         self.tiago_moveit.run(self.pose_place)

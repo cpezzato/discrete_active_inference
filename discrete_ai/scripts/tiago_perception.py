@@ -219,7 +219,7 @@ if __name__ == "__main__":
     box_detection = detectMarker()
     tiago_reach = tiagoReachable('right')
     # To be updated to come from the BT
-    desired_place_loc = [0.345, -1.88, 0.9]
+    desired_place_loc = [0.27, -1.88, 0.81]
 
     # 3 states, 6 total (3 for perception only and 3 for action only)
     mdp_h = demo_templates.MDPIsHolding('isHolding_se')  # State for active inference routines, state_estimation

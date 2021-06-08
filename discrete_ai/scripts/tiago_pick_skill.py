@@ -37,8 +37,8 @@ class tiagoPick(object):
         self.pose_rest = geometry_msgs.msg.Pose()
         self.pose_pick = geometry_msgs.msg.Pose()
         
-        self.pose_rest.position.x = 0.3
-        self.pose_rest.position.y = -0.4
+        self.pose_rest.position.x = 0.2
+        self.pose_rest.position.y = -0.3
         self.pose_rest.position.z = 0.7
         self.pose_rest.orientation.x = 0.707
         self.pose_rest.orientation.y = 0.0
@@ -104,7 +104,7 @@ class tiagoPick(object):
         # Correct for frame gripper and object grasp point (aruco is on top)
         self.pose_pick.position.x -= 0.22
         self.pose_pick.position.z -= 0.015
-        #self.pose_pick.position.y -= 0.04 # aruco detection still not fixed by PAL Robotics
+        self.pose_pick.position.y += 0.02 # aruco detection still not fixed by PAL Robotics
         self.pose_prepick.position = copy.deepcopy(self.pose_pick.position)
         self.pose_prepick.position.z += 0.12
 
@@ -153,7 +153,7 @@ class tiagoPick(object):
 
             self.tiago_moveit.run(self.pose_prepick)
             self.tiago_moveit.run(self.pose_rest)
-            #self.tiago_moveit.scene.remove_attached_object(eef_link, name=box_name)
+            self.tiago_moveit.scene.remove_attached_object(eef_link, name=box_name)
 
         else:
             rospy.loginfo("I am not holding the object, LOL")

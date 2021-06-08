@@ -102,20 +102,20 @@
         </link>
       </model>
       <model name='aruco_marker_original_111'>
-        <pose frame=''>0.363688 -1.87 0.8547 0 0 3.14</pose>
+        <pose frame=''>0.28 -1.87 0.765 0 0 3.14</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>0.363688 -1.87 0.8547 0 0 3.14</pose>
+          <pose frame=''>0.28 -1.87 0.765 0 0 3.14</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='cab_2_shelves'>
-        <pose frame=''>0.51674 -2.1004 0 0 -0 3.14</pose>
+        <pose frame=''>0.51674 -2.1004 -0.10 0 -0 3.14</pose>
         <scale>1 1 1</scale>
         <link name='link_0'>
-          <pose frame=''>0.51674 -2.1004 0 0 -0 3.14</pose>
+          <pose frame=''>0.51674 -2.1004 -0.10 0 -0 3.14</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
