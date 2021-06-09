@@ -127,6 +127,6 @@ rosrun discrete_ai demo_executeBT
 ```
 The expected outcome is the following:
 
-
+![](tiago_sim.gif)
 
 **Note**: The sills used in this simulation are based on standard moveBase and moveIt actions, thus robustness (especially of IK solutions) might make TIAGo fail the grasp. Aruco detection can also imprecise and will be improved over time.  
