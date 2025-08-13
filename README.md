@@ -2,9 +2,21 @@
 
 Repository for active inference and behavior trees for discrete decision making. This repository relies on a TIAGo simulation in a simplified retail store. Please read the associated paper for more theorethical considerations about the algorithms. 
 
-*"Active Inference and Behavior Trees for Reactive Action Planning and Execution in Robotics"*
+### How to cite this work
+If you found this repository useful, please consider citing the associated paper below:
 
-Corrado Pezzato, Carlos Hernandez, Stefan Bonhof, Martijn Wisse, https://arxiv.org/abs/2011.09756
+```bash
+@article{pezzato2023active,
+  title={Active inference and behavior trees for reactive action planning and execution in robotics},
+  author={Pezzato, Corrado and Corbato, Carlos Hern{\'a}ndez and Bonhof, Stefan and Wisse, Martijn},
+  journal={IEEE Transactions on Robotics},
+  volume={39},
+  number={2},
+  pages={1050--1069},
+  year={2023},
+  publisher={IEEE}
+}
+```
 
 ## Content
 This repositiry contains a Matlab examples and a ROS package for active inference for task planning and execution. 
@@ -23,7 +35,7 @@ The other folders are related to the ROS package containing a Python implementat
 
 ***Simulation Environment***
 
-A singularity image can be downloaded from [here](https://drive.google.com/drive/folders/1DYuRWgCiiHCG4ck_7Pf_Kw4Kn-ZpZ-Oy?usp=sharing).
+A singularity image can be downloaded from [here](https://drive.google.com/file/d/1-8wVDL81vfKLlBswJ-mEGZEInYexYtwc/view?usp=sharing).
 
 Alternatively, you can build the singularity yourself:
 1. create a sub directory called 'pkgs' (in the `singularity_environment` directory)
